@@ -14,8 +14,9 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('all-product-listing', require('./components/ProductListing.vue'));
+Vue.component('all-product-listing', require('./components/AllProductListing.vue'));
 Vue.component('filtered-product-listing', require('./components/CategoryProductListing.vue'));
+Vue.component('product-view', require('./components/ProductView.vue'));
 
 const app = new Vue({
     el: '#app'

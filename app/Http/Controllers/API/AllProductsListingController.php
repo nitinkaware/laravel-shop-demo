@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductCollection;
 use App\Product;
 
-class ProductsController extends Controller {
+class AllProductsListingController extends Controller {
 
     public function index()
     {

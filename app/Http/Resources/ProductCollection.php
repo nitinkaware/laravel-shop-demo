@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Controllers\API\CategoryProductsController;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ProductCollection extends ResourceCollection {
@@ -21,5 +20,10 @@ class ProductCollection extends ResourceCollection {
                 ];
             }),
         ];
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->toArray(request()));
     }
 }

@@ -31,7 +31,7 @@
             }
         },
         mounted() {
-            axios.get(route('api.products.index')).then((response) => {
+            axios.get(route('api.products.all.index')).then((response) => {
                 this.products = response.data.data;
             }).catch(function (error) {
                 console.log(error);

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductCollection;
 use App\Product;
 
-class CategoryProductsController extends Controller {
+class CategoryProductsListingController extends Controller {
 
     public function index($categorySlug)
     {

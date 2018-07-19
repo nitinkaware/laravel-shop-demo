@@ -15,9 +15,49 @@ use Faker\Generator as Faker;
 
 $factory->define(App\User::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
-        'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+        'name'           => $faker->name,
+        'email'          => $faker->unique()->safeEmail,
+        'password'       => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
         'remember_token' => str_random(10),
+    ];
+});
+
+$factory->define(App\Product::class, function (Faker $faker) {
+    return [
+        'name'        => $faker->name,
+        'tax_id'      => function () {
+            return factory(\App\Tax::class)->create();
+        },
+        'category_id' => function () {
+            return factory(\App\Category::class)->create();
+        },
+    ];
+});
+
+$factory->define(App\Tax::class, function (Faker $faker) {
+    return [
+        'name'  => 'VAT',
+        'value' => 12.50,
+    ];
+});
+
+$factory->define(App\ProductStatistic::class, function (Faker $faker) {
+    return [
+        'product_id'  => function () {
+            return factory(\App\Product::class)->create();
+        },
+        'view_count'  => $faker->randomDigit,
+        'order_count' => $faker->randomDigit,
+        'shares'      => $faker->randomDigit,
+    ];
+});
+
+$factory->define(App\Category::class, function (Faker $faker) {
+
+    $name = $faker->name;
+
+    return [
+        'name' => $name,
+        'slug' => str_slug($name),
     ];
 });
