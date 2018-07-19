@@ -26,7 +26,9 @@
                 let variants = collect(this.product.variants);
 
                 if (variants.isNotEmpty()) {
-                    return `${variants.min('price')} - ${variants.max('price')}`;
+                    let min = variants.min('price');
+                    let max = variants.max('price');
+                    return (min === max) ? min : `${min} - ${max}`;
                 }
 
                 return 0;

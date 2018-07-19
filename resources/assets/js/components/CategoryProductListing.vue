@@ -18,20 +18,22 @@
 <script>
 
     import Product from './Product.vue';
-    import FilterByCategory from './FilterByCategory.vue';
-
     Vue.component('product', Product);
+
+    import FilterByCategory from './FilterByCategory.vue';
     Vue.component('filter-by-category', FilterByCategory);
 
     export default {
+        props: ['propCategory'],
         data: function () {
             return {
                 products: {},
-                filterBy: []
+                filterBy: [],
+                category: this.propCategory.type
             }
         },
         mounted() {
-            axios.get(route('api.category.index')).then((response) => {
+            axios.get(route('api.category.products.index', this.category)).then((response) => {
                 this.products = response.data.data;
             }).catch(function (error) {
                 console.log(error);
@@ -41,13 +43,8 @@
             this.$root.$on('productFiltered', (data) => {
                 data.checked
                     ? this.filterBy.push(data.id)
-                    : this.remove(this.filterBy, data.id)
+                    : this.filterBy.remove(data.id)
             });
-        },
-        methods: {
-            remove(array, element) {
-                array.splice(array.indexOf(element), 1);
-            }
         },
         computed: {
             filteredProducts: function () {

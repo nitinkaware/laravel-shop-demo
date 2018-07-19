@@ -27,7 +27,9 @@ class DefineMenus {
                 $menu->add($category->name);
 
                 $category->subCategories->each(function ($subCategory) use ($menu, $category) {
-                    $menu->{camel_case($category->name)}->add($subCategory->name, $subCategory->slug);
+                    $menu->{camel_case($category->name)}->add(
+                        $subCategory->name, route("category.products.index", $subCategory->slug)
+                    );
                 });
             });
         });

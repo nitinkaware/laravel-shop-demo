@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="row row-cards">
-            <product v-for="product in products" :key="product.id" :product="product"></product>
+            <product v-for="product in filteredProducts" :key="product.id" :product="product"></product>
         </div>
     </div>
 </template>
@@ -18,27 +18,38 @@
 <script>
 
     import Product from './Product.vue';
-    Vue.component('product', Product);
-
     import FilterByCategory from './FilterByCategory.vue';
+
+    Vue.component('product', Product);
     Vue.component('filter-by-category', FilterByCategory);
 
     export default {
-        props: ['propCategory'],
         data: function () {
             return {
                 products: {},
-                category: this.propCategory.type
+                filterBy: []
             }
         },
         mounted() {
-            axios.get(route('api.products.index', this.category)).then((response) => {
+            axios.get(route('api.products.index')).then((response) => {
                 this.products = response.data.data;
             }).catch(function (error) {
                 console.log(error);
             });
         },
+        created() {
+            this.$root.$on('productFiltered', (data) => {
+                data.checked
+                    ? this.filterBy.push(data.id)
+                    : this.filterBy.remove(data.id)
+            });
+        },
         computed: {
+            filteredProducts: function () {
+                return this.filterBy.length > 0
+                    ? collect(this.products).whereIn('category.id', this.filterBy).all()
+                    : this.products;
+            },
             categories: function () {
                 return collect(this.products).pluck('category').unique('id').all();
             }
