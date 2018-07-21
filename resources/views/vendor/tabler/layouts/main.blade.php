@@ -12,6 +12,7 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
     <link href="{{ asset('admin/assets/css/dashboard.css') }}" rel="stylesheet"/>
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet"/>
     @stack('styles')
     @routes
     <script src="{{ asset('admin/assets/js/require.min.js') }}"></script>
@@ -33,9 +34,9 @@
                         <img src="{!! config('tabler.logo') !!}" class="header-brand-img" alt="Logo">
                     </a>
                     <div class="d-flex order-lg-2 ml-auto">
-                        @if(Auth::check())
-                            @include('tabler::_partials.user')
-                        @endif
+                        <user-dropdown :prop-user="{{ auth()->user() ?? '{}' }}"
+                                       :prop-is-logged-in="{{ auth()->check() ? 'true' : 'false' }}">
+                        </user-dropdown>
                     </div>
                     <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse"
                        data-target="#headerMenuCollapse">

@@ -10,11 +10,12 @@
         <a class="dropdown-item" href="{!! url(config('tabler.urls.profile')) !!}">
             <i class="dropdown-icon fe fe-user"></i> @lang('tabler::user.profile')
         </a>
-        <a class="dropdown-item" href="{!! url(config('tabler.urls.settings')) !!}">
+        <a class="dropdown-item" href="{!! url(config('tabler.urls.setting')) !!}">
             <i class="dropdown-icon fe fe-settings"></i> @lang('tabler::user.settings')
         </a>
-        <a class="dropdown-item" href="javascript:void(0)" id="logout-button">
+        <a class="dropdown-item" href="javascript:void(0)" id="logout-button" onclick="$('#logout').submit()">
             <i class="dropdown-icon fe fe-log-out"></i> @lang('tabler::user.logout')
+            <form id="logout" action="{{ route('logout') }}" method="post"> @csrf </form>
         </a>
     </div>
 </div>

@@ -21,8 +21,28 @@ class Product extends Model {
         return $this->hasMany(Variant::class);
     }
 
+    public function wishListedUsers()
+    {
+        return $this->belongsToMany(User::class, 'wish_lists', 'product_id', 'user_id');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(WishList::class);
+    }
+
     public function statistics()
     {
         return $this->hasOne(ProductStatistic::class);
+    }
+
+    public function isWishListed($user)
+    {
+        $userId = $user instanceof User ? $user->getKey() : $user;
+
+        return $this->wishlists()
+            ->where('user_id', $userId)
+            ->whereNotNull('user_id')
+            ->exists();
     }
 }

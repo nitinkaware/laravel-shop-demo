@@ -11,9 +11,9 @@ class ProductsController extends Controller {
 
     public function index($category, Product $product)
     {
-        $product = new ProductResource($product->load('statistics', 'variants'));
+        $product = new ProductResource($product->load(['statistics', 'variants', 'tax']));
 
-        $topProducts = new ProductCollection($this->getMostOrderdProducts($category));
+        $topProducts = new ProductCollection($this->getMostOrderedProducts($category));
 
         return view('products.index', compact('product', 'topProducts'));
     }
@@ -23,7 +23,7 @@ class ProductsController extends Controller {
      *
      * @return Collection
      */
-    private function getMostOrderdProducts($category): Collection
+    private function getMostOrderedProducts($category): Collection
     {
         return Product::with('tax', 'variants', 'category')->whereHas('category', function ($query) use ($category) {
             $query->where('slug', $category);

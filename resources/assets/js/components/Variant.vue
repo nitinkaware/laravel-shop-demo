@@ -5,18 +5,18 @@
             <div class="selectgroup selectgroup-pills" v-for="variant in variants" :key="variant.id">
                 <label class="selectgroup-item">
                     <input type="radio" name="color" class="selectgroup-input"
-                           :value="variant.id" v-model="selectedColorId">
+                           :value="variant.id" v-model="selectedColor">
                     <span class="selectgroup-button">{{ variant.color }}</span>
                 </label>
             </div>
         </div>
-        <label class="form-label">Select Size:</label>
+        <label v-if="hasSize" class="form-label">Select Size:</label>
         <div class="selectgroup selectgroup-pills" v-if="hasSize">
-            <div class="form-group" v-for="variant in variants" :key="variant.id">
+            <div class="form-group" v-for="(size, index) in sizes" :key="index">
                 <label class="selectgroup-item">
-                    <input type="radio" name="size" :value="variant.size" v-model="selectedSize"
+                    <input type="radio" name="size" :value="size" v-model="selectedSize"
                            class="selectgroup-input">
-                    <span class="selectgroup-button selectgroup-button-icon"> {{ variant.size }} </span>
+                    <span class="selectgroup-button selectgroup-button-icon"> {{ size }} </span>
                 </label>
             </div>
         </div>
@@ -40,13 +40,13 @@
         props: ['variants', 'orderCount', 'shares'],
         data: function () {
             return {
-                selectedColorId: null,
+                selectedColor: null,
                 selectedSize: null
             }
         },
         mounted() {
-            this.selectedColorId = this.variants[0].id;
-            this.selectedSize = this.variants[0].size;
+            this.selectedColor = this.variants[0].id;
+            this.selectedSize = this.sizes.length ? this.sizes[0] : null;
         },
         methods: {
             addToCart() {
@@ -54,11 +54,14 @@
             }
         },
         computed: {
+            sizes: function () {
+                return collect(this.variants).unique('size').pluck('size').filter().sort().all();
+            },
             hasSize: function () {
-                return !!this.variants[0].size;
+                return this.sizes.length;
             },
             price: function () {
-                let variant = collect(this.variants).firstWhere('id', this.selectedColorId);
+                let variant = collect(this.variants).firstWhere('id', this.selectedColor);
                 return (!!variant) ? variant.price : 0;
             }
         }

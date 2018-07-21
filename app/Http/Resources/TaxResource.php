@@ -17,7 +17,7 @@ class TaxResource extends JsonResource {
     {
         return [
             'name'  => $this->name,
-            'value' => $this->value,
+            'value' => (float) $this->value,
         ];
     }
 }

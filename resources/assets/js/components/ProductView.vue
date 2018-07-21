@@ -1,9 +1,13 @@
 <template>
     <div>
+        <login></login>
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
+                        <wishlist :propIsWishlisted="product.is_wish_listed"
+                                  :productId="product.id"
+                        ></wishlist>
                         <div class="mb-4 text-center">
                             <img src="https://picsum.photos/400/300?image=0" alt="Apple iPhone 7 128GB"
                                  class="img-fluid">
@@ -32,6 +36,12 @@
 
     import Product from './Product.vue';
     Vue.component('product', Product);
+
+    import Wishlist from './WishList.vue';
+    Vue.component('wishlist', Wishlist);
+
+    import Login from './Login.vue';
+    Vue.component('login', Login);
 
     export default {
         props: ['product', 'topProducts'],

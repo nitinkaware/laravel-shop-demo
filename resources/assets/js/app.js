@@ -14,9 +14,13 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import VModal from 'vue-js-modal';
+Vue.use(VModal);
+
 Vue.component('all-product-listing', require('./components/AllProductListing.vue'));
 Vue.component('filtered-product-listing', require('./components/CategoryProductListing.vue'));
 Vue.component('product-view', require('./components/ProductView.vue'));
+Vue.component('user-dropdown', require('./components/UserDropdown.vue'));
 
 const app = new Vue({
     el: '#app'

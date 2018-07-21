@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductCollection;
 use App\Product;
@@ -11,9 +10,9 @@ class CategoryProductsListingController extends Controller {
 
     public function index($categorySlug)
     {
-        $ids = Category::whereSlug($categorySlug)->first()->subCategories()->pluck('id');
-
-        $products = Product::with('tax', 'variants', 'category')->whereIn('category_id', $ids)->get();
+        $products = Product::with('tax', 'variants', 'category')->whereHas('category', function ($query) use ($categorySlug) {
+            $query->filterByParentCategory($categorySlug);
+        })->get();
 
         return new ProductCollection($products);
     }

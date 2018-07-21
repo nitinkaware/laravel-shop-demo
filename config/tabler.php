@@ -4,9 +4,9 @@ return [
     'suffix' => '',
     'logo' => 'https://tabler.github.io/tabler/demo/brand/tabler.svg',
     'urls' => [
-        'logout' => '',
-        'profile' => '',
-        'setting' => '',
+        'logout' => '/logout',
+        'profile' => '/profile',
+        'setting' => '/settings',
         'search' => '',
         'homepage' => '',
         'login' => '',

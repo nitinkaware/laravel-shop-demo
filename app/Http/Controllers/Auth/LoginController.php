@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
-class LoginController extends Controller
-{
+class LoginController extends Controller {
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -35,5 +36,37 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function authenticated(Request $request, $user)
+    {
+        if ( !$request->wantsJson()) {
+            return;
+        }
+
+        return response()->json([
+            'isLoggedIn' => auth()->check(),
+            'user'       => auth()->user(),
+            'csrf'       => csrf_token(),
+        ]);
+    }
+
+    /**
+     * The user has logged out of the application.
+     *
+     * @param  \Illuminate\Http\Request $request
+     *
+     * @return mixed
+     */
+    protected function loggedOut(Request $request)
+    {
+        if ( !$request->wantsJson()) {
+            return;
+        }
+
+        return response()->json([
+            'isLoggedIn' => auth()->check(),
+            'csrf'       => csrf_token(),
+        ]);
     }
 }

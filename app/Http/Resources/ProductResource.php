@@ -16,10 +16,12 @@ class ProductResource extends JsonResource {
     public function toArray($request)
     {
         return [
-            'id'         => $this->id,
-            'name'       => $this->name,
-            'statistics' => new ProductStatisticsResource($this->statistics),
-            'variants'   => VariantResource::collection($this->variants),
+            'id'             => $this->id,
+            'name'           => $this->name,
+            'is_wish_listed' => $this->isWishListed(auth()->user()),
+            'tax'            => new TaxResource($this->tax),
+            'statistics'     => new ProductStatisticsResource($this->statistics),
+            'variants'       => VariantResource::collection($this->variants),
         ];
     }
 
