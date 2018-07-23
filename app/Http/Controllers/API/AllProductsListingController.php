@@ -10,6 +10,6 @@ class AllProductsListingController extends Controller {
 
     public function index()
     {
-        return new ProductCollection(Product::with('tax', 'variants', 'category')->get());
+        return new ProductCollection(Product::with('variants', 'category')->get());
     }
 }

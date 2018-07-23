@@ -3,13 +3,14 @@
 namespace Tests\Feature;
 
 use App\Product;
+use App\User;
 use App\WishList;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class WishListTest extends TestCase {
 
-    use  RefreshDatabase;
+    use RefreshDatabase;
 
     /** @test */
     function a_user_should_be_logged_in_before_product_add_to_wishlist()
@@ -50,5 +51,27 @@ class WishListTest extends TestCase {
             ->assertJson([]);
 
         $this->assertTrue(WishList::exists());
+    }
+
+    /** @test */
+    function it_should_return_me_all_my_wishlisted_products()
+    {
+        $this->signIn();
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        //My fav is iphone :P
+        $iphoneX = factory(Product::class)->create();
+        $iphone8 = factory(Product::class)->create();
+        $samsungGalaxy = factory(Product::class)->create();
+
+        $user->wishList()->attach([$iphoneX->getKey(), $iphone8->getKey()]);
+
+        $this->getJson(route('api.wishlist.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(2, 'data');
+
+        $this->assertCount(2, $user->wishList()->get());
     }
 }

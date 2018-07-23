@@ -2,13 +2,17 @@
     <div class="col-md-4">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title"><a
-                        :href="productLink">{{ product.name }}</a></h4>
+                <h4 class="card-title">
+                    <a :href="productLink">{{ product.name }}</a>
+                </h4>
+
                 <div class="mt-5 d-flex align-items-center">
                     <div class="product-price">
                         <strong>&#8377; {{ price }}</strong>
                     </div>
                 </div>
+
+                <slot name="button"></slot>
             </div>
         </div>
     </div>

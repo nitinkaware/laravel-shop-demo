@@ -10,7 +10,7 @@ class CategoryProductsListingController extends Controller {
 
     public function index($categorySlug)
     {
-        $products = Product::with('tax', 'variants', 'category')->whereHas('category', function ($query) use ($categorySlug) {
+        $products = Product::with('variants', 'category')->whereHas('category', function ($query) use ($categorySlug) {
             $query->filterByParentCategory($categorySlug);
         })->get();
 

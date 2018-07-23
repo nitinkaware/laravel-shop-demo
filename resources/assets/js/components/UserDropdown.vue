@@ -14,6 +14,9 @@
                 <a class="dropdown-item" href="/settings">
                     <i class="dropdown-icon fe fe-settings"></i> Settings
                 </a>
+                <a class="dropdown-item" :href="route('wishlist.index')">
+                    <i class="dropdown-icon fe fe-heart"></i> Wishlist
+                </a>
                 <a class="dropdown-item" href="javascript:void(0)" @click="logout">
                     <i class="dropdown-icon fe fe-log-out"></i> Logout
                 </a>
@@ -39,6 +42,7 @@
             });
         },
         methods: {
+            route: route,
             logout: function () {
                 axios.post(route('logout')).then(() => {
                     window.location.reload();

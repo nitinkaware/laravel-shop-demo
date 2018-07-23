@@ -1,13 +1,11 @@
 <template>
-    <div>
-        <a href="javascript:void(0)"
-           class="icon d-none d-md-inline-block ml-3 pull-right mb-2"
-           :class="isWishlisted ? 'red' : '' "
-           @click="toggleWishList"
-        >
-            <i :class="heartClass"></i>
-        </a>
-    </div>
+    <a href="javascript:void(0)"
+       class="icon d-none d-md-inline-block ml-3 pull-right mb-2"
+       :class="isWishlisted ? 'red' : '' "
+       @click="toggleWishList"
+    >
+        <i :class="heartClass"></i>
+    </a>
 </template>
 
 <script>
