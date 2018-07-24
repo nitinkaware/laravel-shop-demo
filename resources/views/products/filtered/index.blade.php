@@ -3,7 +3,8 @@
 @section('content')
     <div class="my-3 my-md-5">
         <div class="container">
-            <filtered-product-listing :prop-category="{{ json_encode(['type' => request()->route('category')]) }}"></filtered-product-listing>
+            <product-listing :route="`{{ route('api.category.products.index', request()->route('category')) }}`">
+            </product-listing>
         </div>
     </div>
 @endsection

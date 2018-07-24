@@ -10,21 +10,23 @@
             </div>
         </div>
         <div class="row row-cards">
-            <product v-for="product in filteredProducts" :key="product.id" :product="product">
-                <div slot="button">
-                    <buy-product :prop-product-id="product.id"></buy-product>
-                </div>
-            </product>
+            <product v-for="product in filteredProducts" :key="product.id" :product="product"></product>
         </div>
     </div>
 </template>
 
 <script>
 
+    import Product from './Product.vue';
+    import FilterByCategory from './FilterByCategory.vue';
     import BuyProduct from './BuyProduct.vue';
-    Vue.component('buy-product', BuyProduct);
+
+    Vue.component('product', Product);
+    Vue.component('filter-by-category', FilterByCategory);
+    Vue.component('buy-product', FilterByCategory);
 
     export default {
+        props: ['route'],
         data: function () {
             return {
                 products: {},
@@ -32,7 +34,7 @@
             }
         },
         mounted() {
-            axios.get(route('api.wishlist.index')).then((response) => {
+            axios.get(this.route).then((response) => {
                 this.products = response.data.data;
             }).catch(function (error) {
                 console.log(error);

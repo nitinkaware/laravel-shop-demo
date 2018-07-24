@@ -12,7 +12,7 @@ class WishListController extends Controller {
 
     function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth:api');
     }
 
     public function index()
