@@ -13,7 +13,8 @@
                                  class="img-fluid">
                         </div>
                         <h4 class="card-title"><span>{{ product.name }}</span></h4>
-                        <variant :variants="product.variants"
+                        <variant :product-id="product.id"
+                                 :variants="product.variants"
                                  :order-count="product.statistics.order_count"
                                  :shares="product.statistics.shares">
                         </variant>

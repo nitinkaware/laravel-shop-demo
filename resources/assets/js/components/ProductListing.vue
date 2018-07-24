@@ -1,5 +1,9 @@
 <template>
     <div>
+        <loading :active.sync="isLoading"
+                 :can-cancel="false"
+                 :is-full-page="true">
+        </loading>
         <div class="form-group">
             <label class="form-label">Filter By:</label>
             <div class="selectgroup selectgroup-pills">
@@ -17,26 +21,30 @@
 
 <script>
 
+    import Loading from 'vue-loading-overlay';
     import Product from './Product.vue';
     import FilterByCategory from './FilterByCategory.vue';
-    import BuyProduct from './BuyProduct.vue';
 
     Vue.component('product', Product);
     Vue.component('filter-by-category', FilterByCategory);
     Vue.component('buy-product', FilterByCategory);
+    Vue.component('loading', Loading);
 
     export default {
         props: ['route'],
         data: function () {
             return {
+                isLoading: true,
                 products: {},
                 filterBy: []
             }
         },
         mounted() {
             axios.get(this.route).then((response) => {
+                this.isLoading = false;
                 this.products = response.data.data;
             }).catch(function (error) {
+                this.isLoading = false;
                 console.log(error);
             });
         },
