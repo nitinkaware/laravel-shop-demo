@@ -37873,12 +37873,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['productId', 'variants', 'orderCount', 'shares', 'propItemsInCart'],
     data: function data() {
         return {
+            isAdding: false,
             selectedColorId: null,
             selectedSizeId: null,
             itemsInCart: collect(this.propItemsInCart)
@@ -37893,23 +37896,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         addToCart: function addToCart() {
             var _this = this;
 
-            if (this.hasColorSizeInCart) {
+            if (this.itemAlreadyInCart) {
                 return;
             }
 
+            this.isAdding = true;
             axios.post(route('api.checkout.cart.store'), {
                 product_id: this.productId,
                 size_id: this.selectedSizeId,
                 color_id: this.selectedColorId
             }).then(function (response) {
+
+                _this.isAdding = false;
+                // HTTP_ALREADY_REPORTED
+                if (response.status === 208) {
+                    return;
+                }
+
                 _this.itemsInCart = collect(response.data.data);
 
                 _this.$root.$emit('addedToCart', {
                     itemsInCartCount: _this.itemsInCart.count()
                 });
             }).catch(function (error) {
+                _this.isAdding = false;
                 if (error.response.status === 401) {
-
                     _this.$modal.show('login', {
                         callback: _this.addToCart
                     });
@@ -37918,13 +37929,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     computed: {
+        itemCartClass: function itemCartClass() {
+            if (this.isAdding) {
+                return 'fa fa-spinner fa-spin';
+            }
+
+            return {
+                'fe fe-arrow-right': this.itemAlreadyInCart,
+                'fe fe-shopping-bag': !this.itemAlreadyInCart
+            };
+        },
+        itemCartText: function itemCartText() {
+            if (this.isAdding) {
+                return 'ADDING';
+            }
+
+            return this.itemAlreadyInCart ? 'GO TO CART' : 'ADD TO CART';
+        },
         cartRoute: function cartRoute() {
             return route('checkout.cart.index');
         },
-        hasColorSizeInCart: function hasColorSizeInCart() {
+        itemAlreadyInCart: function itemAlreadyInCart() {
             var _this2 = this;
 
             return this.itemsInCart.contains(function (item) {
+                if (!_this2.hasSize) {
+                    return item.color.id === _this2.selectedColorId;
+                }
+
                 return item.color.id === _this2.selectedColorId && item.size.id === _this2.selectedSizeId;
             });
         },
@@ -38062,25 +38094,19 @@ var render = function() {
               "a",
               {
                 staticClass: "btn btn-primary",
+                class: _vm.isAdding ? "disabled" : "",
                 attrs: {
-                  href: _vm.hasColorSizeInCart
+                  href: _vm.itemAlreadyInCart
                     ? _vm.cartRoute
                     : "javascript:void(0)"
                 },
                 on: { click: _vm.addToCart }
               },
               [
-                _c("i", {
-                  staticClass: "fe",
-                  class: _vm.hasColorSizeInCart
-                    ? "fe-arrow-right"
-                    : "fe-shopping-bag"
-                }),
+                _c("i", { class: _vm.itemCartClass }),
                 _vm._v(
                   "\n                  " +
-                    _vm._s(
-                      _vm.hasColorSizeInCart ? "GO TO CART" : "ADD TO CART"
-                    ) +
+                    _vm._s(_vm.itemCartText) +
                     "\n            "
                 )
               ]

@@ -27,10 +27,12 @@
                 <span v-if="!! shares">| Shares: {{ shares }}</span>
             </div>
             <div class="pull-right">
-                <a v-if="!! price" :href="hasColorSizeInCart ? cartRoute : 'javascript:void(0)'" class="btn btn-primary"
+                <a v-if="!! price"
+                   :href="itemAlreadyInCart ? cartRoute : 'javascript:void(0)'"
+                   class="btn btn-primary" :class="isAdding ? 'disabled' : ''"
                    @click="addToCart">
-                    <i class="fe" :class="hasColorSizeInCart ? 'fe-arrow-right' : 'fe-shopping-bag'"></i>
-                    &nbsp; {{ hasColorSizeInCart ? 'GO TO CART' : 'ADD TO CART' }}
+                    <i :class="itemCartClass"></i>
+                    &nbsp; {{ itemCartText }}
                 </a>
             </div>
         </div>
@@ -43,6 +45,7 @@
         props: ['productId', 'variants', 'orderCount', 'shares', 'propItemsInCart'],
         data: function () {
             return {
+                isAdding: false,
                 selectedColorId: null,
                 selectedSizeId: null,
                 itemsInCart: collect(this.propItemsInCart)
@@ -54,23 +57,32 @@
         },
         methods: {
             addToCart() {
-                if (this.hasColorSizeInCart) {
+                if (this.itemAlreadyInCart) {
                     return;
                 }
 
+                this.isAdding = true;
                 axios.post(route('api.checkout.cart.store'), {
                     product_id: this.productId,
                     size_id: this.selectedSizeId,
                     color_id: this.selectedColorId
                 }).then((response) => {
+
+                    this.isAdding = false;
+                    // HTTP_ALREADY_REPORTED
+                    if (response.status === 208) {
+                        return;
+                    }
+
                     this.itemsInCart = collect(response.data.data);
 
                     this.$root.$emit('addedToCart', {
                         itemsInCartCount: this.itemsInCart.count()
                     });
-                }).catch(error => {
-                    if (error.response.status === 401) {
 
+                }).catch(error => {
+                    this.isAdding = false;
+                    if (error.response.status === 401) {
                         this.$modal.show('login', {
                             callback: this.addToCart
                         });
@@ -79,11 +91,32 @@
             }
         },
         computed: {
+            itemCartClass: function () {
+                if (this.isAdding) {
+                    return 'fa fa-spinner fa-spin';
+                }
+
+                return {
+                    'fe fe-arrow-right': this.itemAlreadyInCart,
+                    'fe fe-shopping-bag': !this.itemAlreadyInCart,
+                }
+            },
+            itemCartText: function () {
+                if (this.isAdding) {
+                    return 'ADDING';
+                }
+
+                return this.itemAlreadyInCart ? 'GO TO CART' : 'ADD TO CART';
+            },
             cartRoute: function () {
                 return route('checkout.cart.index');
             },
-            hasColorSizeInCart: function () {
+            itemAlreadyInCart: function () {
                 return this.itemsInCart.contains((item) => {
+                    if (!this.hasSize) {
+                        return item.color.id === this.selectedColorId;
+                    }
+
                     return item.color.id === this.selectedColorId
                         && item.size.id === this.selectedSizeId;
                 });

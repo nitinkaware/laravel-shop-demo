@@ -27,7 +27,15 @@ final class AddToCart {
 
     public function handle()
     {
-        return auth()->user()->carts()->firstOrCreate([
+        $alreadyInCart = auth()->user()->carts()->where([
+            'product_id' => $this->product->id,
+            'color_id'   => $this->colorId,
+            'size_id'    => $this->sizeId,
+        ])->exists();
+
+        abort_if($alreadyInCart, response()->json([], 208));
+
+        return auth()->user()->carts()->create([
             'product_id' => $this->product->id,
             'color_id'   => $this->colorId,
             'size_id'    => $this->sizeId,
