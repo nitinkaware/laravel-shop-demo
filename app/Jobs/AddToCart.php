@@ -4,8 +4,6 @@ namespace App\Jobs;
 
 use App\Http\Requests\CartRequest;
 use App\Product;
-use App\Variant;
-use Gloudemans\Shoppingcart\Facades\Cart;
 
 final class AddToCart {
 
@@ -29,17 +27,10 @@ final class AddToCart {
 
     public function handle()
     {
-        $color = Variant::find($this->colorId);
-        $size = Variant::find($this->sizeId);
-
-        return Cart::add([
-            'id'      => $this->product->getKey(),
-            'name'    => $this->product->name,
-            'qty'     => 1,
-            'price'   => $color->price,
-            'options' => [
-                'size'  => $size->size,
-                'color' => $color->color,
-            ]]);
+        return auth()->user()->carts()->firstOrCreate([
+            'product_id' => $this->product->id,
+            'color_id'   => $this->colorId,
+            'size_id'    => $this->sizeId,
+        ]);
     }
 }

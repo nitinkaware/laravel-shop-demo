@@ -66,7 +66,7 @@
         },
         methods: {
             setCallback(event) {
-                this.callback = event.params.callback;
+                this.callback = event.params ? event.params.callback : (() => {});
             },
             login() {
                 this.form.post(route('login'), {

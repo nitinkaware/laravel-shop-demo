@@ -34,8 +34,11 @@
                         <img src="{!! config('tabler.logo') !!}" class="header-brand-img" alt="Logo">
                     </a>
                     <div class="d-flex order-lg-2 ml-auto">
-                        <cart-menu :prop-count="{{ Cart::count() }}"></cart-menu>
-                        <user-dropdown :prop-user="{{ auth()->user() ?? '{}' }}"
+                        @php $authUser = auth()->user(); @endphp
+
+                        <cart-menu :prop-count="{{ \App\Cart::count() }}"></cart-menu>
+
+                        <user-dropdown :prop-user="{{ $authUser ?? '{}' }}"
                                        :prop-is-logged-in="{{ auth()->check() ? 'true' : 'false' }}">
                         </user-dropdown>
                     </div>

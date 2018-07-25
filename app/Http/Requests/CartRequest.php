@@ -41,9 +41,7 @@ class CartRequest extends FormRequest {
             $rules['size_id'] = ['required', Rule::in($sizes->toArray())];
         }
 
-        if ($colors->isNotEmpty()) {
-            $rules['color_id'] = ['required', Rule::in($colors->toArray())];
-        }
+        $rules['color_id'] = ['required', Rule::in($colors->toArray())];
 
         return $rules;
     }
@@ -75,12 +73,12 @@ class CartRequest extends FormRequest {
         return Product::find($this->product_id);
     }
 
-    public function sizeId(): int
+    public function sizeId()
     {
         return $this->size_id;
     }
 
-    public function colorId(): int
+    public function colorId()
     {
         return $this->color_id;
     }

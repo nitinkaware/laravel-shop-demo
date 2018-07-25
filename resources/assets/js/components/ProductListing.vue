@@ -27,7 +27,6 @@
 
     Vue.component('product', Product);
     Vue.component('filter-by-category', FilterByCategory);
-    Vue.component('buy-product', FilterByCategory);
     Vue.component('loading', Loading);
 
     export default {

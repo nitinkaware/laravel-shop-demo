@@ -14,6 +14,7 @@
                         </div>
                         <h4 class="card-title"><span>{{ product.name }}</span></h4>
                         <variant :product-id="product.id"
+                                 :prop-items-in-cart="product.items_in_cart.data"
                                  :variants="product.variants"
                                  :order-count="product.statistics.order_count"
                                  :shares="product.statistics.shares">

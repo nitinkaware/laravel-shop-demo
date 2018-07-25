@@ -12,10 +12,10 @@ class ProductCollection extends ResourceCollection {
             'data' => $this->collection->transform(function ($product) {
 
                 return [
-                    'id'       => $product->id,
-                    'name'     => $product->name,
-                    'category' => new CategoryResource($product->category),
-                    'variants' => VariantResource::collection($product->variants),
+                    'id'            => $product->id,
+                    'name'          => $product->name,
+                    'category'      => new CategoryResource($product->category),
+                    'variants'      => VariantResource::collection($product->variants),
                 ];
             }),
         ];

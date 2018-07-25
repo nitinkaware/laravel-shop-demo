@@ -36,6 +36,18 @@ class Product extends Model {
         return $this->hasOne(ProductStatistic::class);
     }
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function scopeAuthUserCart()
+    {
+        $this->whereHas('carts', function ($query) {
+            $query->where('user_id', auth()->id());
+        });
+    }
+
     public function isWishListed($user)
     {
         $userId = $user instanceof User ? $user->getKey() : $user;

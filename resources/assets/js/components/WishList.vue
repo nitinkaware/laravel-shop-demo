@@ -25,11 +25,8 @@
                     'product_id': this.productId
                 }).catch((error) => {
 
-                    if (error.response.status) {
-
-                        this.$modal.show('login', {
-                            callback: this.toggleWishList
-                        });
+                    if (error.response.status === 401) {
+                        this.$modal.show('login');
                     }
 
                     this.isWishlisted = originalAction;

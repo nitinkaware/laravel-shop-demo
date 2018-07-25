@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Cart;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource {
@@ -19,6 +20,7 @@ class ProductResource extends JsonResource {
             'id'             => $this->id,
             'name'           => $this->name,
             'is_wish_listed' => $this->isWishListed(auth()->user()),
+            'items_in_cart'  => new CartCollection(Cart::with('product', 'color', 'size')->get()),
             'tax'            => new TaxResource($this->tax),
             'statistics'     => new ProductStatisticsResource($this->statistics),
             'variants'       => VariantResource::collection($this->variants),

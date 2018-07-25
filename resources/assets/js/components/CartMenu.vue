@@ -8,8 +8,8 @@
             <button class="btn btn-md btn-outline-primary" @click="redirectToCart" :disabled="isLoading">
                 <i class="fe fe-shopping-cart" data-toggle="tooltip" title="fe fe-shopping-cart"></i>
                 Cart
-                <span v-if=" !!numberOfItemsInCart" class="badge badge-primary rounded-full relative">
-                    {{ numberOfItemsInCart }}
+                <span v-if=" !!itemsInCartCount" class="badge badge-primary rounded-full relative">
+                    {{ itemsInCartCount }}
                 </span>
             </button>
         </div>
@@ -25,14 +25,13 @@
         props: ['propCount'],
         data: function () {
             return {
-                numberOfItemsInCart: this.propCount,
+                itemsInCartCount: this.propCount,
                 isLoading: false,
             }
         },
         created(){
             this.$root.$on('addedToCart', (data) => {
-                this.numberOfItemsInCart += 1;
-                //this.numberOfItemsInCart = data.cart_count;
+                this.itemsInCartCount = data.itemsInCartCount;
             });
         },
         methods: {

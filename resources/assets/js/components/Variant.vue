@@ -27,9 +27,10 @@
                 <span v-if="!! shares">| Shares: {{ shares }}</span>
             </div>
             <div class="pull-right">
-                <a v-if="!! price" href="javascript:void(0)" class="btn btn-primary" @click="addToCart">
-                    <i class="fe fe-shopping-bag"></i>
-                    &nbsp; ADD TO CART
+                <a v-if="!! price" :href="hasColorSizeInCart ? cartRoute : 'javascript:void(0)'" class="btn btn-primary"
+                   @click="addToCart">
+                    <i class="fe" :class="hasColorSizeInCart ? 'fe-arrow-right' : 'fe-shopping-bag'"></i>
+                    &nbsp; {{ hasColorSizeInCart ? 'GO TO CART' : 'ADD TO CART' }}
                 </a>
             </div>
         </div>
@@ -39,11 +40,12 @@
 <script>
 
     export default {
-        props: ['productId', 'variants', 'orderCount', 'shares'],
+        props: ['productId', 'variants', 'orderCount', 'shares', 'propItemsInCart'],
         data: function () {
             return {
                 selectedColorId: null,
-                selectedSizeId: null
+                selectedSizeId: null,
+                itemsInCart: collect(this.propItemsInCart)
             }
         },
         mounted() {
@@ -52,21 +54,40 @@
         },
         methods: {
             addToCart() {
+                if (this.hasColorSizeInCart) {
+                    return;
+                }
+
                 axios.post(route('api.checkout.cart.store'), {
                     product_id: this.productId,
                     size_id: this.selectedSizeId,
                     color_id: this.selectedColorId
                 }).then((response) => {
-//                    {
-//                        numberOfItemsInCart: response.data.cart_count
-//                    }
-                    this.$root.$emit('addedToCart');
+                    this.itemsInCart = collect(response.data.data);
+
+                    this.$root.$emit('addedToCart', {
+                        itemsInCartCount: this.itemsInCart.count()
+                    });
                 }).catch(error => {
-                    console.log(error);
+                    if (error.response.status === 401) {
+
+                        this.$modal.show('login', {
+                            callback: this.addToCart
+                        });
+                    }
                 });
             }
         },
         computed: {
+            cartRoute: function () {
+                return route('checkout.cart.index');
+            },
+            hasColorSizeInCart: function () {
+                return this.itemsInCart.contains((item) => {
+                    return item.color.id === this.selectedColorId
+                        && item.size.id === this.selectedSizeId;
+                });
+            },
             sizes: function () {
                 return collect(this.variants).unique('size').filter((item) => {
                     return !!item.size;
