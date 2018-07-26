@@ -3,13 +3,15 @@
 namespace Tests\Feature;
 
 use App\Cart;
+use App\Jobs\AddToCart;
 use App\Product;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CartTest extends TestCase {
 
-    use RefreshDatabase;
+    use RefreshDatabase, DispatchesJobs;
 
     /** @test */
     function product_id_is_required()
@@ -151,5 +153,47 @@ class CartTest extends TestCase {
         ]))->assertStatus(202);
 
         $this->assertEquals(1, Cart::count());
+    }
+
+    /** @test */
+    function an_item_can_be_removed_from_cart()
+    {
+        $this->signIn();
+
+        $this->deleteJson(route('api.checkout.cart.destroy', $this->addProductToCart()))
+            ->assertStatus(204);
+
+        $this->assertEquals(0, auth()->user()->carts()->count());
+    }
+
+    private function addProductToCart()
+    {
+        /** @var Product $kurta */
+        $kurta = factory(Product::class)->create(['name' => 'Libas Women Navy']);
+
+        $kurta->variants()->createMany([
+            [
+                'color' => 'Green Printed Layered',
+                'size'  => 30,
+                'price' => 764,
+            ],
+            [
+                'color' => 'Green Printed Layered',
+                'size'  => 32,
+                'price' => 764,
+            ],
+            [
+                'color' => 'Blue Printed Layered',
+                'size'  => 30,
+                'price' => 1000,
+            ],
+            [
+                'color' => 'Blue Printed Layered',
+                'size'  => 32,
+                'price' => 1000,
+            ],
+        ]);
+
+        return $this->dispatchNow(new AddToCart($kurta, 2, 2));
     }
 }

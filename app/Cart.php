@@ -29,11 +29,11 @@ class Cart extends Model {
 
     public function color()
     {
-        return $this->belongsTo(Variant::class, 'color_id', 'id')->select('id', 'color');
+        return $this->belongsTo(Variant::class, 'color_id', 'id')->select('id', 'color', 'price');
     }
 
     public function size()
     {
-        return $this->belongsTo(Variant::class, 'size_id', 'id')->select('id', 'size', 'price');
+        return $this->belongsTo(Variant::class, 'size_id', 'id')->select('id', 'size');
     }
 }

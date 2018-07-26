@@ -18,11 +18,6 @@ class ProductsController extends Controller {
         return view('products.index', compact('product', 'topProducts'));
     }
 
-    /**
-     * @param $category
-     *
-     * @return Collection
-     */
     private function getMostOrderedProducts($category): Collection
     {
         return Product::with('tax', 'variants', 'category')->whereHas('category', function ($query) use ($category) {

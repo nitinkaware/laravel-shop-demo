@@ -21,7 +21,7 @@ class CartController extends Controller {
 
         return (new CartCollection($this->getCartCollection()))
             ->response()
-            ->setStatusCode(202);;
+            ->setStatusCode(202);
     }
 
     private function getCartCollection()

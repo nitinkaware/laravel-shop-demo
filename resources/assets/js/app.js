@@ -22,6 +22,7 @@ Vue.component('product-listing', require('./components/ProductListing.vue'));
 Vue.component('product-view', require('./components/ProductView.vue'));
 Vue.component('user-dropdown', require('./components/UserDropdown.vue'));
 Vue.component('cart-menu', require('./components/CartMenu.vue'));
+Vue.component('cart-checkout', require('./components/CartCheckout.vue'));
 
 const app = new Vue({
     el: '#app'

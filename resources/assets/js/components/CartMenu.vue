@@ -30,7 +30,7 @@
             }
         },
         created(){
-            this.$root.$on('addedToCart', (data) => {
+            this.$root.$on(['addedToCart', 'removedFromCart'], (data) => {
                 this.itemsInCartCount = data.itemsInCartCount;
             });
         },

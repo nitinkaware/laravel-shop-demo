@@ -37,7 +37,7 @@ $factory->define(App\Product::class, function (Faker $faker) {
 $factory->define(App\Tax::class, function (Faker $faker) {
     return [
         'name'  => 'VAT',
-        'value' => 12.50,
+        'value' => array_random([12.50, 4]),
     ];
 });
 
