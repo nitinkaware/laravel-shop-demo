@@ -6,6 +6,11 @@ use App\Http\Resources\CartCheckoutCollection;
 
 class CartCheckoutController extends Controller {
 
+    function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         $cart = auth()->user()->carts()->with('product.tax', 'color', 'size')->get();

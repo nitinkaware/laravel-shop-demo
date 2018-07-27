@@ -1,5 +1,35 @@
 <template>
     <div class="row-cards row-deck">
+        <modal name="product-quantity" :width="200" :height="150" :pivotX="0.5" :pivotY="0.3">
+            <div class="cart">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Quantity</label>
+                                <select class="form-control custom-select"
+                                        v-model="quantityToUpdate">
+                                    <option v-for="quantity in availableQuantity"
+                                            :value="quantity"
+                                            :selected="quantity === selectedQuantity"
+                                            :disabled="quantity === selectedQuantity">{{ quantity }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-sm btn-primary btn-block" @click="updateCartQuantity"
+                                        :disabled="updating">
+                                    <i :class="updating ? 'fa fa-spinner fa-spin' : 'fe fe-save'"
+                                       data-toggle="tooltip"
+                                       title="" data-original-title="Save"></i>
+                                    {{ updating ? '' : 'Save' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </modal>
         <div class="col-12" v-if="!hasItemInCart">
             <div class="alert alert-primary">
                 Your cart is empty, add something <a href="/" class="alert-link"> here!!</a>
@@ -41,7 +71,7 @@
                                     {{ item.product.name }}
                                 </div>
                                 <div class="small text-muted">
-                                    Tax: {{ item.price }}
+                                    Tax: {{ item.calculated_tax }}
                                 </div>
                             </td>
                             <td class="text-center">
@@ -51,8 +81,8 @@
                                 <div>{{ item.size.name }}</div>
                             </td>
                             <td class="text-center">
-                                <span class="cursor">
-                                    1 <i class="fa fa-caret-down"></i>
+                                <span class="cursor" @click="showQuantityModal(item.id)">
+                                    {{ item.quantity }} <i class="fa fa-caret-down"></i>
                                 </span>
                             </td>
                             <td class="text-center">
@@ -76,24 +106,46 @@
         props: ['propItemsInCart'],
         data: function () {
             return {
-                itemsInCart: this.propItemsInCart.data
+                updating: false,
+                itemsInCart: this.propItemsInCart.data,
+                updatingCartId: null,
+                quantityToUpdate: ''
             }
         },
         created(){
 
         },
         computed: {
+            availableQuantity: function () {
+                return [1, 2, 3, 4, 5];
+            },
+            selectedQuantity: function () {
+                let cart = collect(this.itemsInCart).firstWhere('id', this.updatingCartId);
+
+                return cart ? cart.quantity : null;
+            },
             hasItemInCart: function () {
                 return this.itemsInCart.length;
             },
             total: function () {
-                return collect(this.itemsInCart).sum('price');
+                return collect(this.itemsInCart).map(function (item) {
+                    let productTotal = item.price * item.quantity;
+                    let tax = ((productTotal * item.product.tax.value) / 100);
+                    item['calculated_tax'] = tax;
+                    item['calculated_price'] = (productTotal) + tax;
+                    return item;
+                }).sum('calculated_price');
             },
             totalItemsInCartCount: function () {
                 return collect(this.itemsInCart).count();
             }
         },
         methods: {
+            showQuantityModal(cartId) {
+                this.updatingCartId = cartId;
+                this.quantityToUpdate = this.selectedQuantity;
+                this.$modal.show('product-quantity');
+            },
             removeItemFromCart: function (cartId) {
                 swal({
                     title: 'Are you sure?',
@@ -126,6 +178,19 @@
                         });
                     }
                 })
+            },
+            updateCartQuantity: function () {
+                this.updating = true;
+                axios.put(route('api.checkout.quantity.update', this.updatingCartId), {
+                    'quantity': this.quantityToUpdate
+                }).then((response) => {
+                    collect(this.itemsInCart).firstWhere('id', this.updatingCartId).quantity = response.data.quantity;
+                    this.$modal.hide('product-quantity');
+                    this.updating = false;
+                }).catch((error) => {
+                    this.updating = false;
+                    console.log(error);
+                });
             }
         }
     }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Cart;
 use App\Http\Resources\CartCheckoutCollection;
 use App\Jobs\AddToCart;
 use App\Product;
@@ -13,6 +14,11 @@ class CartCheckoutTest extends TestCase {
 
     use RefreshDatabase, DispatchesJobs;
 
+    /** @test */
+    function it_should_be_for_logged_in_user()
+    {
+        $this->get(route('checkout.cart.index'))->assertRedirect('/login');
+    }
     /** @test */
     function it_should_get_all_the_items_in_the_cart_for_checkout()
     {
@@ -27,6 +33,61 @@ class CartCheckoutTest extends TestCase {
         $resource = (new CartCheckoutCollection(auth()->user()->carts()->with('product', 'color', 'size')->get()));
 
         $this->assertSame(json_decode($resource->response()->getContent(), true), $response->json());
+    }
+
+    /** @test */
+    function quantity_is_required()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.quantity.update', Cart::first()))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('quantity');
+    }
+
+    /** @test */
+    function quantity_should_be_between_1_to_5_and_number()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.quantity.update', Cart::first()), [
+            'quantity' => 6,
+        ])->assertStatus(422)->assertJsonValidationErrors('quantity');
+
+        //It should be integer.
+        $this->putJson(route('api.checkout.quantity.update', Cart::first()), [
+            'quantity' => 'sd',
+        ])->assertStatus(422)->assertJsonValidationErrors('quantity');
+    }
+
+    /** @test */
+    function it_should_return_404_if_the_cart_id_is_invalid()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.quantity.update', 10), [
+            'quantity' => 4,
+        ])->assertStatus(404);
+    }
+
+    /** @test */
+    function it_should_update_the_quantity_in_the_cart()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.quantity.update', Cart::first()), [
+            'quantity' => 3,
+        ])->assertStatus(202);
+
+        $this->assertEquals(3, Cart::first()->quantity);
     }
 
     private function addProductToCart(): void

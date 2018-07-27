@@ -18,12 +18,15 @@ class CartCheckoutCollection extends ResourceCollection {
         return [
             'data' => $this->collection->transform(function ($cart) {
 
+
                 return [
                     'id'      => $cart->id,
+                    'price'   => (float) $cart->color->price,
+                    'quantity'   => $cart->quantity,
                     'product' => [
-                        'id'   => $cart->product->id,
-                        'name' => $cart->product->name,
-                        'tax'  => [
+                        'id'       => $cart->product->id,
+                        'name'     => $cart->product->name,
+                        'tax'      => [
                             'id'    => $cart->product->tax->id,
                             'value' => (float) $cart->product->tax->value,
                         ],
@@ -36,7 +39,6 @@ class CartCheckoutCollection extends ResourceCollection {
                         'id'   => optional($cart->size)->id,
                         'name' => optional($cart->size)->size,
                     ],
-                    'price'   => (float) $cart->color->price,
                 ];
             }),
         ];

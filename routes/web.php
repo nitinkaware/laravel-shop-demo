@@ -15,9 +15,10 @@ Route::namespace('Api')->prefix('api/v1')->name('api.')->group(function () {
     Route::get('/products/all', 'AllProductsListingController@index')->name('products.all.index');
     Route::get('/products/{category}', 'CategoryProductsListingController@index')->name('category.products.index');
 
+    Route::post('/checkout/cart/', 'CartController@store')->name('checkout.cart.store');
     Route::get('/checkout/cart/', 'CartCheckoutController@index')->name('checkout.cart.index');
     Route::delete('/checkout/cart/{cart}', 'CartCheckoutController@destroy')->name('checkout.cart.destroy');
-    Route::post('/checkout/cart/', 'CartController@store')->name('checkout.cart.store');
+    Route::put('/checkout/quantity/{cart}', 'CheckoutCartQuantityController@update')->name('checkout.quantity.update');
 
     Route::prefix('my')->group(function () {
         Route::get('/wishlist/', 'WishListController@index')->name('wishlist.index');

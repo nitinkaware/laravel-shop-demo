@@ -11,6 +11,7 @@ class Cart extends Model {
         'product_id',
         'color_id',
         'size_id',
+        'quantity',
     ];
 
     protected static function boot()

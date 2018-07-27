@@ -156,6 +156,30 @@ class CartTest extends TestCase {
     }
 
     /** @test */
+    function default_quantity_one_will_be_saved_in_database()
+    {
+        $this->signIn();
+
+        /** @var Product $product */
+        $product = factory(Product::class)->create();
+
+        // Add some variants to product.
+        $product->variants()->create([
+            'color' => 'red',
+            'size'  => 13,
+            'price' => 3000,
+        ]);
+
+        $this->postJson(route('api.checkout.cart.store'), [
+            'product_id' => $product->getKey(),
+            'size_id'    => 1,
+            'color_id'   => 1,
+        ]);
+
+        $this->assertEquals(1, Cart::first()->quantity);
+    }
+
+    /** @test */
     function an_item_can_be_removed_from_cart()
     {
         $this->signIn();
