@@ -78,7 +78,9 @@
                                 <div>{{ item.color.name }}</div>
                             </td>
                             <td class="text-center">
-                                <div>{{ item.size.name }}</div>
+                                <span class="cursor">
+                                    {{ item.size.name }} <i class="fa fa-caret-down"></i>
+                                </span>
                             </td>
                             <td class="text-center">
                                 <span class="cursor" @click="showQuantityModal(item.id)">
@@ -196,7 +198,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .cursor {
         cursor: pointer;
     }

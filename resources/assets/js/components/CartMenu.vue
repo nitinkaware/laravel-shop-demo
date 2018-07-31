@@ -5,8 +5,8 @@
                  :is-full-page="true">
         </loading>
         <div class="nav-item d-none d-md-flex">
-            <button class="btn btn-md btn-outline-primary" @click="redirectToCart" :disabled="isLoading">
-                <i class="fe fe-shopping-cart" data-toggle="tooltip" title="fe fe-shopping-cart"></i>
+            <button class="btn btn-md btn-outline-primary" @click="redirectToCart" :disabled="isLoading" :title="`Your cart contains ${itemsInCartCount} items.`">
+                <i class="fe fe-shopping-cart"></i>
                 Cart
                 <span v-if=" !!itemsInCartCount" class="badge badge-primary rounded-full relative">
                     {{ itemsInCartCount }}

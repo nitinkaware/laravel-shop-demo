@@ -6,6 +6,7 @@ use App\Cart;
 use App\Http\Resources\CartCheckoutCollection;
 use App\Jobs\AddToCart;
 use App\Product;
+use App\Variant;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -19,6 +20,7 @@ class CartCheckoutTest extends TestCase {
     {
         $this->get(route('checkout.cart.index'))->assertRedirect('/login');
     }
+
     /** @test */
     function it_should_get_all_the_items_in_the_cart_for_checkout()
     {
@@ -88,6 +90,54 @@ class CartCheckoutTest extends TestCase {
         ])->assertStatus(202);
 
         $this->assertEquals(3, Cart::first()->quantity);
+    }
+
+    /** @test */
+    function product_size_is_required()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.size.update', Cart::first()))
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('size_id');
+    }
+
+    /** @test */
+    function product_size_should_be_valid_for_cart_product_is_required()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        // Size should be exits in database and it should be associated with that product.
+        $this->putJson(route('api.checkout.size.update', Cart::first()), [
+            'size_id' => 121,
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors('size_id');
+
+        $this->putJson(route('api.checkout.size.update', 121), [
+            'size_id' => 1,
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors('size_id');
+    }
+
+    /** @test */
+    function user_can_update_the_product_size()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->assertEquals(2, Cart::first()->size_id);
+
+        // Size should be exits in database and it should be associated with that product.
+        $this->putJson(route('api.checkout.size.update', Cart::first()), [
+            'size_id' => 1,
+        ])->assertStatus(202);
+
+        $this->assertEquals(1, Cart::first()->size_id);
     }
 
     private function addProductToCart(): void
