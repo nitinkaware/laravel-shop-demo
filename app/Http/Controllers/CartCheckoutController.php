@@ -13,7 +13,7 @@ class CartCheckoutController extends Controller {
 
     public function index()
     {
-        $cart = auth()->user()->carts()->with('product.tax', 'color', 'size')->get();
+        $cart = auth()->user()->carts()->with('product.tax', 'product.variants', 'color', 'size')->get();
 
         return view('checkout.cart.index', ['itemsInCart' => new CartCheckoutCollection($cart)]);
     }

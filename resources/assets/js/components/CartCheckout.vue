@@ -11,13 +11,41 @@
                                         v-model="quantityToUpdate">
                                     <option v-for="quantity in availableQuantity"
                                             :value="quantity"
-                                            :selected="quantity === selectedQuantity"
                                             :disabled="quantity === selectedQuantity">{{ quantity }}
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-sm btn-primary btn-block" @click="updateCartQuantity"
+                                        :disabled="updating">
+                                    <i :class="updating ? 'fa fa-spinner fa-spin' : 'fe fe-save'"
+                                       data-toggle="tooltip"
+                                       title="" data-original-title="Save"></i>
+                                    {{ updating ? '' : 'Save' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </modal>
+        <modal name="product-size" :width="200" :height="150" :pivotX="0.5" :pivotY="0.3">
+            <div class="cart">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-label">Size</label>
+                                <select class="form-control custom-select"
+                                        v-model="selectedSizeId">
+                                    <option v-for="size in availableProductSizes"
+                                            :value="size.id"
+                                            :disabled="size.id === selectedSizeId">{{ size.size }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-sm btn-primary btn-block" @click="updateCartSize"
                                         :disabled="updating">
                                     <i :class="updating ? 'fa fa-spinner fa-spin' : 'fe fe-save'"
                                        data-toggle="tooltip"
@@ -78,7 +106,7 @@
                                 <div>{{ item.color.name }}</div>
                             </td>
                             <td class="text-center">
-                                <span class="cursor">
+                                <span class="cursor" @click="showSizeModal(item)">
                                     {{ item.size.name }} <i class="fa fa-caret-down"></i>
                                 </span>
                             </td>
@@ -111,13 +139,20 @@
                 updating: false,
                 itemsInCart: this.propItemsInCart.data,
                 updatingCartId: null,
-                quantityToUpdate: ''
+                quantityToUpdate: '',
+                currentCartItem: null,
+                selectedSizeId: null,
             }
         },
         created(){
 
         },
         computed: {
+            availableProductSizes: function () {
+                return this.currentCartItem
+                    ? this.currentCartItem.product.variants
+                    : [];
+            },
             availableQuantity: function () {
                 return [1, 2, 3, 4, 5];
             },
@@ -147,6 +182,11 @@
                 this.updatingCartId = cartId;
                 this.quantityToUpdate = this.selectedQuantity;
                 this.$modal.show('product-quantity');
+            },
+            showSizeModal(cartItem) {
+                this.selectedSizeId = cartItem.size.id;
+                this.currentCartItem = cartItem;
+                this.$modal.show('product-size');
             },
             removeItemFromCart: function (cartId) {
                 swal({
@@ -193,7 +233,20 @@
                     this.updating = false;
                     console.log(error);
                 });
-            }
+            },
+            updateCartSize: function () {
+                this.updating = true;
+                axios.put(route('api.checkout.size.update', this.currentCartItem.id), {
+                    'size_id': this.selectedSizeId
+                }).then((response) => {
+                    ///collect(this.itemsInCart).firstWhere('id', this.updatingCartId).quantity = response.data.quantity;
+                    this.$modal.hide('product-size');
+                    this.updating = false;
+                }).catch((error) => {
+                    this.updating = false;
+                    console.log(error);
+                });
+            },
         }
     }
 </script>

@@ -20,22 +20,23 @@ class CartCheckoutCollection extends ResourceCollection {
 
 
                 return [
-                    'id'      => $cart->id,
-                    'price'   => (float) $cart->color->price,
-                    'quantity'   => $cart->quantity,
-                    'product' => [
+                    'id'       => $cart->id,
+                    'price'    => (float) $cart->color->price,
+                    'quantity' => $cart->quantity,
+                    'product'  => [
                         'id'       => $cart->product->id,
                         'name'     => $cart->product->name,
+                        'variants' => $cart->product->variants,
                         'tax'      => [
                             'id'    => $cart->product->tax->id,
                             'value' => (float) $cart->product->tax->value,
                         ],
                     ],
-                    'color'   => [
+                    'color'    => [
                         'id'   => $cart->color->id,
                         'name' => ucfirst($cart->color->color),
                     ],
-                    'size'    => [
+                    'size'     => [
                         'id'   => optional($cart->size)->id,
                         'name' => optional($cart->size)->size,
                     ],

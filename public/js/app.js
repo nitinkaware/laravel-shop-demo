@@ -44588,13 +44588,13 @@ if (false) {
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(207)
+  __webpack_require__(198)
 }
 var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(200)
 /* template */
-var __vue_template__ = __webpack_require__(209)
+var __vue_template__ = __webpack_require__(201)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -44633,13 +44633,79 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 198 */,
-/* 199 */,
+/* 198 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(199);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(26)("2374fe5e", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-569b6b3d\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./CartCheckout.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-569b6b3d\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./CartCheckout.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 199 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(25)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.cursor[data-v-569b6b3d] {\n    cursor: pointer;\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
 /* 200 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -44753,12 +44819,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             updating: false,
             itemsInCart: this.propItemsInCart.data,
             updatingCartId: null,
-            quantityToUpdate: ''
+            quantityToUpdate: '',
+            currentCartItem: null,
+            selectedSizeId: null
         };
     },
     created: function created() {},
 
     computed: {
+        availableProductSizes: function availableProductSizes() {
+            return this.currentCartItem ? this.currentCartItem.product.variants : [];
+        },
         availableQuantity: function availableQuantity() {
             return [1, 2, 3, 4, 5];
         },
@@ -44788,6 +44859,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.updatingCartId = cartId;
             this.quantityToUpdate = this.selectedQuantity;
             this.$modal.show('product-quantity');
+        },
+        showSizeModal: function showSizeModal(cartItem) {
+            this.selectedSizeId = cartItem.size.id;
+            this.currentCartItem = cartItem;
+            this.$modal.show('product-size');
         },
 
         removeItemFromCart: function removeItemFromCart(cartId) {
@@ -44831,63 +44907,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this2.updating = false;
                 console.log(error);
             });
+        },
+        updateCartSize: function updateCartSize() {
+            var _this3 = this;
+
+            this.updating = true;
+            axios.put(route('api.checkout.size.update', this.currentCartItem.id), {
+                'size_id': this.selectedSizeId
+            }).then(function (response) {
+                ///collect(this.itemsInCart).firstWhere('id', this.updatingCartId).quantity = response.data.quantity;
+                _this3.$modal.hide('product-size');
+                _this3.updating = false;
+            }).catch(function (error) {
+                _this3.updating = false;
+                console.log(error);
+            });
         }
     }
 });
 
 /***/ }),
-/* 201 */,
-/* 202 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 203 */,
-/* 204 */,
-/* 205 */,
-/* 206 */,
-/* 207 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(208);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(26)("2374fe5e", content, false, {});
-// Hot Module Replacement
-if(false) {
- // When the styles change, update the <style> tags
- if(!content.locals) {
-   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-569b6b3d\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./CartCheckout.vue", function() {
-     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-569b6b3d\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./CartCheckout.vue");
-     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-     update(newContent);
-   });
- }
- // When the module is disposed, remove the <style> tags
- module.hot.dispose(function() { update(); });
-}
-
-/***/ }),
-/* 208 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(25)(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.cursor[data-v-569b6b3d] {\n    cursor: pointer;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-/* 209 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -44954,10 +44994,7 @@ var render = function() {
                             attrs: {
                               disabled: quantity === _vm.selectedQuantity
                             },
-                            domProps: {
-                              value: quantity,
-                              selected: quantity === _vm.selectedQuantity
-                            }
+                            domProps: { value: quantity }
                           },
                           [
                             _vm._v(
@@ -44977,6 +45014,107 @@ var render = function() {
                         staticClass: "btn btn-sm btn-primary btn-block",
                         attrs: { disabled: _vm.updating },
                         on: { click: _vm.updateCartQuantity }
+                      },
+                      [
+                        _c("i", {
+                          class: _vm.updating
+                            ? "fa fa-spinner fa-spin"
+                            : "fe fe-save",
+                          attrs: {
+                            "data-toggle": "tooltip",
+                            title: "",
+                            "data-original-title": "Save"
+                          }
+                        }),
+                        _vm._v(
+                          "\n                                " +
+                            _vm._s(_vm.updating ? "" : "Save") +
+                            "\n                            "
+                        )
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "modal",
+        {
+          attrs: {
+            name: "product-size",
+            width: 200,
+            height: 150,
+            pivotX: 0.5,
+            pivotY: 0.3
+          }
+        },
+        [
+          _c("div", { staticClass: "cart" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { staticClass: "form-label" }, [
+                      _vm._v("Size")
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selectedSizeId,
+                            expression: "selectedSizeId"
+                          }
+                        ],
+                        staticClass: "form-control custom-select",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.selectedSizeId = $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          }
+                        }
+                      },
+                      _vm._l(_vm.availableProductSizes, function(size) {
+                        return _c(
+                          "option",
+                          {
+                            attrs: { disabled: size.id === _vm.selectedSizeId },
+                            domProps: { value: size.id }
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(size.size) +
+                                "\n                                "
+                            )
+                          ]
+                        )
+                      })
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-primary btn-block",
+                        attrs: { disabled: _vm.updating },
+                        on: { click: _vm.updateCartSize }
                       },
                       [
                         _c("i", {
@@ -45065,14 +45203,25 @@ var render = function() {
                           ]),
                           _vm._v(" "),
                           _c("td", { staticClass: "text-center" }, [
-                            _c("span", { staticClass: "cursor" }, [
-                              _vm._v(
-                                "\n                                " +
-                                  _vm._s(item.size.name) +
-                                  " "
-                              ),
-                              _c("i", { staticClass: "fa fa-caret-down" })
-                            ])
+                            _c(
+                              "span",
+                              {
+                                staticClass: "cursor",
+                                on: {
+                                  click: function($event) {
+                                    _vm.showSizeModal(item)
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(item.size.name) +
+                                    " "
+                                ),
+                                _c("i", { staticClass: "fa fa-caret-down" })
+                              ]
+                            )
                           ]),
                           _vm._v(" "),
                           _c("td", { staticClass: "text-center" }, [
@@ -45189,6 +45338,12 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-569b6b3d", module.exports)
   }
 }
+
+/***/ }),
+/* 202 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
