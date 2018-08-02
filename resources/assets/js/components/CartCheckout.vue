@@ -37,10 +37,10 @@
                             <div class="form-group">
                                 <label class="form-label">Size</label>
                                 <select class="form-control custom-select"
-                                        v-model="selectedSizeId">
+                                        v-model="selectedSize">
                                     <option v-for="size in availableProductSizes"
                                             :value="size.id"
-                                            :disabled="size.id === selectedSizeId">{{ size.size }}
+                                            :disabled="size.id === selectedSize">{{ size.size }}
                                     </option>
                                 </select>
                             </div>
@@ -141,7 +141,7 @@
                 updatingCartId: null,
                 quantityToUpdate: '',
                 currentCartItem: null,
-                selectedSizeId: null,
+                selectedSize: null,
             }
         },
         created(){
@@ -175,7 +175,7 @@
             },
             totalItemsInCartCount: function () {
                 return collect(this.itemsInCart).count();
-            }
+            },
         },
         methods: {
             showQuantityModal(cartId) {
@@ -184,8 +184,8 @@
                 this.$modal.show('product-quantity');
             },
             showSizeModal(cartItem) {
-                this.selectedSizeId = cartItem.size.id;
                 this.currentCartItem = cartItem;
+                this.selectedSize = cartItem.size.id;
                 this.$modal.show('product-size');
             },
             removeItemFromCart: function (cartId) {
@@ -237,9 +237,11 @@
             updateCartSize: function () {
                 this.updating = true;
                 axios.put(route('api.checkout.size.update', this.currentCartItem.id), {
-                    'size_id': this.selectedSizeId
-                }).then((response) => {
-                    ///collect(this.itemsInCart).firstWhere('id', this.updatingCartId).quantity = response.data.quantity;
+                    'size_id': this.selectedSize
+                }).then(() => {
+                    let variant = collect(this.currentCartItem.product.variants).firstWhere('id', this.selectedSize);
+                    this.currentCartItem.size.name = variant.size;
+                    this.currentCartItem.size.id = variant.id;
                     this.$modal.hide('product-size');
                     this.updating = false;
                 }).catch((error) => {

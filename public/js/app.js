@@ -44821,7 +44821,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             updatingCartId: null,
             quantityToUpdate: '',
             currentCartItem: null,
-            selectedSizeId: null
+            selectedSize: null
         };
     },
     created: function created() {},
@@ -44861,8 +44861,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.$modal.show('product-quantity');
         },
         showSizeModal: function showSizeModal(cartItem) {
-            this.selectedSizeId = cartItem.size.id;
             this.currentCartItem = cartItem;
+            this.selectedSize = cartItem.size.id;
             this.$modal.show('product-size');
         },
 
@@ -44913,9 +44913,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             this.updating = true;
             axios.put(route('api.checkout.size.update', this.currentCartItem.id), {
-                'size_id': this.selectedSizeId
-            }).then(function (response) {
-                ///collect(this.itemsInCart).firstWhere('id', this.updatingCartId).quantity = response.data.quantity;
+                'size_id': this.selectedSize
+            }).then(function () {
+                var variant = collect(_this3.currentCartItem.product.variants).firstWhere('id', _this3.selectedSize);
+                _this3.currentCartItem.size.name = variant.size;
+                _this3.currentCartItem.size.id = variant.id;
                 _this3.$modal.hide('product-size');
                 _this3.updating = false;
             }).catch(function (error) {
@@ -45069,8 +45071,8 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.selectedSizeId,
-                            expression: "selectedSizeId"
+                            value: _vm.selectedSize,
+                            expression: "selectedSize"
                           }
                         ],
                         staticClass: "form-control custom-select",
@@ -45084,7 +45086,7 @@ var render = function() {
                                 var val = "_value" in o ? o._value : o.value
                                 return val
                               })
-                            _vm.selectedSizeId = $event.target.multiple
+                            _vm.selectedSize = $event.target.multiple
                               ? $$selectedVal
                               : $$selectedVal[0]
                           }
@@ -45094,7 +45096,7 @@ var render = function() {
                         return _c(
                           "option",
                           {
-                            attrs: { disabled: size.id === _vm.selectedSizeId },
+                            attrs: { disabled: size.id === _vm.selectedSize },
                             domProps: { value: size.id }
                           },
                           [
