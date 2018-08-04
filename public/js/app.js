@@ -44678,63 +44678,8 @@ exports.push([module.i, "\n.cursor[data-v-569b6b3d] {\n    cursor: pointer;\n}\n
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Models_UpdateSizeQuantity_vue__ = __webpack_require__(207);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Models_UpdateSizeQuantity_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__Models_UpdateSizeQuantity_vue__);
 //
 //
 //
@@ -44811,33 +44756,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
+
+
+Vue.component('cart-quantity-size', __WEBPACK_IMPORTED_MODULE_0__Models_UpdateSizeQuantity_vue___default.a);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['propItemsInCart'],
     data: function data() {
         return {
-            updating: false,
-            itemsInCart: this.propItemsInCart.data,
-            updatingCartId: null,
-            quantityToUpdate: '',
-            currentCartItem: null,
-            selectedSize: null
+            itemsInCart: this.propItemsInCart.data
         };
     },
     created: function created() {},
 
     computed: {
-        availableProductSizes: function availableProductSizes() {
-            return this.currentCartItem ? this.currentCartItem.product.variants : [];
-        },
-        availableQuantity: function availableQuantity() {
-            return [1, 2, 3, 4, 5];
-        },
-        selectedQuantity: function selectedQuantity() {
-            var cart = collect(this.itemsInCart).firstWhere('id', this.updatingCartId);
-
-            return cart ? cart.quantity : null;
-        },
         hasItemInCart: function hasItemInCart() {
             return this.itemsInCart.length;
         },
@@ -44855,15 +44787,37 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
     },
     methods: {
-        showQuantityModal: function showQuantityModal(cartId) {
-            this.updatingCartId = cartId;
-            this.quantityToUpdate = this.selectedQuantity;
-            this.$modal.show('product-quantity');
+        showQuantityModal: function showQuantityModal(cart) {
+            this.$modal.show('product-quantity-size', {
+                route: 'api.checkout.quantity.update',
+                requestParam: 'quantity',
+                label: 'Select Quantity',
+                cart: cart,
+                selected: cart.quantity,
+                type: 'quantity',
+                collection: collect([1, 2, 3, 4, 5]).map(function (item) {
+                    return {
+                        id: item,
+                        value: item
+                    };
+                }).all()
+            });
         },
-        showSizeModal: function showSizeModal(cartItem) {
-            this.currentCartItem = cartItem;
-            this.selectedSize = cartItem.size.id;
-            this.$modal.show('product-size');
+        showSizeModal: function showSizeModal(cart) {
+            this.$modal.show('product-quantity-size', {
+                route: 'api.checkout.size.update',
+                requestParam: 'size_id',
+                label: 'Select Size',
+                cart: cart,
+                selected: cart.size.id,
+                type: 'size',
+                collection: collect(cart.product.variants).unique('size').map(function (item) {
+                    return {
+                        id: item.id,
+                        value: item.size
+                    };
+                }).all()
+            });
         },
 
         removeItemFromCart: function removeItemFromCart(cartId) {
@@ -44892,38 +44846,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     });
                 }
             });
-        },
-        updateCartQuantity: function updateCartQuantity() {
-            var _this2 = this;
-
-            this.updating = true;
-            axios.put(route('api.checkout.quantity.update', this.updatingCartId), {
-                'quantity': this.quantityToUpdate
-            }).then(function (response) {
-                collect(_this2.itemsInCart).firstWhere('id', _this2.updatingCartId).quantity = response.data.quantity;
-                _this2.$modal.hide('product-quantity');
-                _this2.updating = false;
-            }).catch(function (error) {
-                _this2.updating = false;
-                console.log(error);
-            });
-        },
-        updateCartSize: function updateCartSize() {
-            var _this3 = this;
-
-            this.updating = true;
-            axios.put(route('api.checkout.size.update', this.currentCartItem.id), {
-                'size_id': this.selectedSize
-            }).then(function () {
-                var variant = collect(_this3.currentCartItem.product.variants).firstWhere('id', _this3.selectedSize);
-                _this3.currentCartItem.size.name = variant.size;
-                _this3.currentCartItem.size.id = variant.id;
-                _this3.$modal.hide('product-size');
-                _this3.updating = false;
-            }).catch(function (error) {
-                _this3.updating = false;
-                console.log(error);
-            });
         }
     }
 });
@@ -44940,209 +44862,7 @@ var render = function() {
     "div",
     { staticClass: "row-cards row-deck" },
     [
-      _c(
-        "modal",
-        {
-          attrs: {
-            name: "product-quantity",
-            width: 200,
-            height: 150,
-            pivotX: 0.5,
-            pivotY: 0.3
-          }
-        },
-        [
-          _c("div", { staticClass: "cart" }, [
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-md-12" }, [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c("label", { staticClass: "form-label" }, [
-                      _vm._v("Quantity")
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.quantityToUpdate,
-                            expression: "quantityToUpdate"
-                          }
-                        ],
-                        staticClass: "form-control custom-select",
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.quantityToUpdate = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          }
-                        }
-                      },
-                      _vm._l(_vm.availableQuantity, function(quantity) {
-                        return _c(
-                          "option",
-                          {
-                            attrs: {
-                              disabled: quantity === _vm.selectedQuantity
-                            },
-                            domProps: { value: quantity }
-                          },
-                          [
-                            _vm._v(
-                              _vm._s(quantity) +
-                                "\n                                "
-                            )
-                          ]
-                        )
-                      })
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-sm btn-primary btn-block",
-                        attrs: { disabled: _vm.updating },
-                        on: { click: _vm.updateCartQuantity }
-                      },
-                      [
-                        _c("i", {
-                          class: _vm.updating
-                            ? "fa fa-spinner fa-spin"
-                            : "fe fe-save",
-                          attrs: {
-                            "data-toggle": "tooltip",
-                            title: "",
-                            "data-original-title": "Save"
-                          }
-                        }),
-                        _vm._v(
-                          "\n                                " +
-                            _vm._s(_vm.updating ? "" : "Save") +
-                            "\n                            "
-                        )
-                      ]
-                    )
-                  ])
-                ])
-              ])
-            ])
-          ])
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "modal",
-        {
-          attrs: {
-            name: "product-size",
-            width: 200,
-            height: 150,
-            pivotX: 0.5,
-            pivotY: 0.3
-          }
-        },
-        [
-          _c("div", { staticClass: "cart" }, [
-            _c("div", { staticClass: "card-body" }, [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-md-12" }, [
-                  _c("div", { staticClass: "form-group" }, [
-                    _c("label", { staticClass: "form-label" }, [
-                      _vm._v("Size")
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "select",
-                      {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.selectedSize,
-                            expression: "selectedSize"
-                          }
-                        ],
-                        staticClass: "form-control custom-select",
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.selectedSize = $event.target.multiple
-                              ? $$selectedVal
-                              : $$selectedVal[0]
-                          }
-                        }
-                      },
-                      _vm._l(_vm.availableProductSizes, function(size) {
-                        return _c(
-                          "option",
-                          {
-                            attrs: { disabled: size.id === _vm.selectedSize },
-                            domProps: { value: size.id }
-                          },
-                          [
-                            _vm._v(
-                              _vm._s(size.size) +
-                                "\n                                "
-                            )
-                          ]
-                        )
-                      })
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "form-group" }, [
-                    _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-sm btn-primary btn-block",
-                        attrs: { disabled: _vm.updating },
-                        on: { click: _vm.updateCartSize }
-                      },
-                      [
-                        _c("i", {
-                          class: _vm.updating
-                            ? "fa fa-spinner fa-spin"
-                            : "fe fe-save",
-                          attrs: {
-                            "data-toggle": "tooltip",
-                            title: "",
-                            "data-original-title": "Save"
-                          }
-                        }),
-                        _vm._v(
-                          "\n                                " +
-                            _vm._s(_vm.updating ? "" : "Save") +
-                            "\n                            "
-                        )
-                      ]
-                    )
-                  ])
-                ])
-              ])
-            ])
-          ])
-        ]
-      ),
+      _c("cart-quantity-size"),
       _vm._v(" "),
       !_vm.hasItemInCart
         ? _c("div", { staticClass: "col-12" }, [_vm._m(0)])
@@ -45221,7 +44941,9 @@ var render = function() {
                                     _vm._s(item.size.name) +
                                     " "
                                 ),
-                                _c("i", { staticClass: "fa fa-caret-down" })
+                                !!item.size.name
+                                  ? _c("i", { staticClass: "fa fa-caret-down" })
+                                  : _vm._e()
                               ]
                             )
                           ]),
@@ -45233,7 +44955,7 @@ var render = function() {
                                 staticClass: "cursor",
                                 on: {
                                   click: function($event) {
-                                    _vm.showQuantityModal(item.id)
+                                    _vm.showQuantityModal(item)
                                   }
                                 }
                               },
@@ -45346,6 +45068,277 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(208)
+/* template */
+var __vue_template__ = __webpack_require__(209)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/Models/UpdateSizeQuantity.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-0266d05a", Component.options)
+  } else {
+    hotAPI.reload("data-v-0266d05a", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 208 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            label: '',
+            collection: [{
+                id: '',
+                value: ''
+            }],
+            cart: {},
+            updating: false,
+            selected: null,
+            route: '',
+            requestParam: '',
+            type: []
+        };
+    },
+    computed: {},
+    methods: {
+        beforeOpen: function beforeOpen(event) {
+            var _this = this;
+
+            collect(['label', 'collection', 'cart', 'selected', 'requestParam', 'route', 'type']).each(function (item) {
+                _this[item] = event.params[item];
+            });
+        },
+        handleSubmit: function handleSubmit() {
+            var _this2 = this;
+
+            this.updating = true;
+            axios.put(route(this.route, this.cart.id), _defineProperty({}, this.requestParam, this.selected)).then(function (response) {
+                if (_this2.type === 'quantity') {
+                    _this2.cart.quantity = response.data.quantity;
+                } else {
+                    var variant = collect(_this2.cart.product.variants).firstWhere('id', _this2.selected);
+                    _this2.cart.size.name = variant.size;
+                    _this2.cart.size.id = variant.id;
+                }
+
+                _this2.$modal.hide('product-quantity-size');
+                _this2.updating = false;
+            }).catch(function (error) {
+                _this2.updating = false;
+                console.log(error);
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 209 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "modal",
+        {
+          attrs: {
+            name: "product-quantity-size",
+            width: 200,
+            height: 150,
+            pivotX: 0.5,
+            pivotY: 0.3
+          },
+          on: { "before-open": _vm.beforeOpen }
+        },
+        [
+          _c("div", { staticClass: "cart" }, [
+            _c("div", { staticClass: "card-body" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-md-12" }, [
+                  _c("div", { staticClass: "form-group" }, [
+                    _c("label", { staticClass: "form-label" }, [
+                      _vm._v(_vm._s(_vm.label))
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "select",
+                      {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.selected,
+                            expression: "selected"
+                          }
+                        ],
+                        staticClass: "form-control custom-select",
+                        on: {
+                          change: function($event) {
+                            var $$selectedVal = Array.prototype.filter
+                              .call($event.target.options, function(o) {
+                                return o.selected
+                              })
+                              .map(function(o) {
+                                var val = "_value" in o ? o._value : o.value
+                                return val
+                              })
+                            _vm.selected = $event.target.multiple
+                              ? $$selectedVal
+                              : $$selectedVal[0]
+                          }
+                        }
+                      },
+                      _vm._l(_vm.collection, function(ref) {
+                        var id = ref.id
+                        var value = ref.value
+                        return _c(
+                          "option",
+                          {
+                            attrs: { disabled: id === _vm.selected },
+                            domProps: { value: id }
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(value) +
+                                "\n                                "
+                            )
+                          ]
+                        )
+                      })
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "form-group" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-primary btn-block",
+                        attrs: { disabled: _vm.updating },
+                        on: { click: _vm.handleSubmit }
+                      },
+                      [
+                        _c("i", {
+                          class: _vm.updating
+                            ? "fa fa-spinner fa-spin"
+                            : "fe fe-save",
+                          attrs: {
+                            "data-toggle": "tooltip",
+                            title: "",
+                            "data-original-title": "Save"
+                          }
+                        }),
+                        _vm._v(
+                          "\n                                " +
+                            _vm._s(_vm.updating ? "" : "Save") +
+                            "\n                            "
+                        )
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ])
+        ]
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-0266d05a", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);

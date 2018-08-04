@@ -36,7 +36,7 @@ class CheckoutCartQuantityRequest extends FormRequest {
 
     public function cart()
     {
-        $cart = Cart::find($this->route('cart'));
+        $cart = $this->user()->carts()->find($this->route('cart'));
 
         abort_if($cart === null, response()->json([], 404));
 
