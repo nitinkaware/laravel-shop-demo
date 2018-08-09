@@ -1,5 +1,9 @@
 <template>
     <div class="row-cards row-deck">
+        <loading :active.sync="isLoading"
+                 :can-cancel="false"
+                 :is-full-page="true">
+        </loading>
         <cart-quantity-size></cart-quantity-size>
         <div class="col-12" v-if="!hasItemInCart">
             <div class="alert alert-primary">
@@ -69,6 +73,11 @@
                     </table>
                 </div>
             </div>
+            <div>
+                <button class="btn btn-primary pull-right text-uppercase" @click="goToAddress">
+                    Place Order
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -78,10 +87,14 @@
     import CartQuantitySize from './Models/UpdateSizeQuantity.vue';
     Vue.component('cart-quantity-size', CartQuantitySize);
 
+    import Loading from 'vue-loading-overlay';
+    Vue.component('loading', Loading);
+
     export default {
         props: ['propItemsInCart'],
         data: function () {
             return {
+                isLoading: false,
                 itemsInCart: this.propItemsInCart.data,
             }
         },
@@ -93,13 +106,13 @@
                 return this.itemsInCart.length;
             },
             total: function () {
-                return collect(this.itemsInCart).map(function (item) {
+                return indian_format(collect(this.itemsInCart).map(function (item) {
                     let productTotal = item.price * item.quantity;
                     let tax = ((productTotal * item.product.tax.value) / 100);
                     item['calculated_tax'] = tax;
                     item['calculated_price'] = (productTotal) + tax;
                     return item;
-                }).sum('calculated_price');
+                }).sum('calculated_price'));
             },
             totalItemsInCartCount: function () {
                 return collect(this.itemsInCart).count();
@@ -171,6 +184,9 @@
                     }
                 })
             },
+            goToAddress: function () {
+                this.isLoading = true;
+            }
         }
     }
 </script>
