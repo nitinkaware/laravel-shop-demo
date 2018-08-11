@@ -16,7 +16,15 @@ class AddressTest extends TestCase {
         $this->signIn();
 
         auth()->user()->addresses()->create([
-            ''
+            'pin_code'   => 414001,
+            'town'       => 'Ahmednagar',
+            'distinct'   => 'Ahmednagar',
+            'state'      => 'Maharashtra',
+            'state_code' => 'MH',
+            'name'       => 'Nitin Kaware',
+            'address'    => 'At. Dahigaon, Post: Shiradhon',
+            'mobile'     => 7577887766,
+            'is_default' => false,
         ]);
 
         $this->assertCount(1, auth()->user()->addresses()->get());

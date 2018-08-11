@@ -24,5 +24,6 @@ Route::namespace('Api')->prefix('api/v1')->name('api.')->group(function () {
     Route::prefix('my')->group(function () {
         Route::get('/wishlist/', 'WishListController@index')->name('wishlist.index');
         Route::post('/wishlist/', 'WishListController@store')->name('wishlist.store');
+        Route::post('/address/', 'AddressController@store')->name('my.address.store');
     });
 });
