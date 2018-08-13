@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddressRequest;
+use App\Http\Resources\AddressCollection;
 use App\Jobs\CreateAddress;
 
 class AddressController extends Controller {
@@ -15,8 +16,10 @@ class AddressController extends Controller {
 
     public function store(AddressRequest $request)
     {
-        $address = $this->dispatchNow(CreateAddress::fromRequest($request));
+        $this->dispatchNow(CreateAddress::fromRequest($request));
 
-        return response()->json($address, 201);
+        return response()->json(new AddressCollection(
+            auth()->user()->addresses()->get()
+        ), 201);
     }
 }

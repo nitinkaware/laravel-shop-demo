@@ -24,6 +24,7 @@ Vue.component('product-view', require('./components/ProductView.vue'));
 Vue.component('user-dropdown', require('./components/UserDropdown.vue'));
 Vue.component('cart-menu', require('./components/CartMenu.vue'));
 Vue.component('cart-checkout', require('./components/CartCheckout.vue'));
+Vue.component('address-checkout', require('./components/AddressCheckout.vue'));
 
 const app = new Vue({
     el: '#app'

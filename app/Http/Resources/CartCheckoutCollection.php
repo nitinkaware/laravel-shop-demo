@@ -16,8 +16,7 @@ class CartCheckoutCollection extends ResourceCollection {
     public function toArray($request)
     {
         return [
-            'data' => $this->collection->transform(function ($cart) {
-
+            'data'  => $this->collection->transform(function ($cart) {
 
                 return [
                     'id'       => $cart->id,
@@ -42,6 +41,20 @@ class CartCheckoutCollection extends ResourceCollection {
                     ],
                 ];
             }),
+            'order' => [
+                'sum'           => (float) $this->collection->sum(function ($cart) {
+                    return (float) $cart['price'] * $cart['quantity'];
+                }),
+                'tax'           => $this->collection->sum(function ($cart) {
+                    $total = (float) $cart['price'] * $cart['quantity'];
+                    return ($total * data_get($cart, 'product.tax.value')) / 100;
+                }),
+                'payable'       => $this->collection->sum(function ($cart) {
+                    $total = (float) $cart['price'] * $cart['quantity'];
+                    $tax = ($total * data_get($cart, 'product.tax.value')) / 100;
+                    return $tax + $total;
+                }),
+            ],
         ];
     }
 }

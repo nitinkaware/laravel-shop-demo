@@ -65,9 +65,15 @@ final class CreateAddress {
             ->json();
 
 
+        if ($this->isDefault) {
+            auth()->user()->addresses()->update([
+                'is_default' => false,
+            ]);
+        }
+
         return auth()->user()->addresses()->create([
             'pin_code'   => $this->pinCode,
-            'town'       => $responseJson['city'] ?? '',
+            'town'       => $this->locality,
             'distinct'   => $responseJson['city'] ?? '',
             'state'      => $responseJson['stateName'] ?? '',
             'state_code' => $responseJson['state'] ?? '',

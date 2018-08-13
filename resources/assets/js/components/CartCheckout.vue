@@ -186,6 +186,7 @@
             },
             goToAddress: function () {
                 this.isLoading = true;
+                window.location = route('checkout.address.index');
             }
         }
     }

@@ -209,4 +209,10 @@ class AddressTest extends TestCase {
 
         $this->assertCount(1, auth()->user()->addresses()->get());
     }
+
+    /** @test */
+    function it_should_find_state_and_city_by_pin_code()
+    {
+
+    }
 }
