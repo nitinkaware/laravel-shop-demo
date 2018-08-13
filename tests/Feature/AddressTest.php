@@ -199,15 +199,23 @@ class AddressTest extends TestCase {
     {
         $this->signIn();
 
-        $this->postJson(route('api.my.address.store'), [
+        $data = [
             'pin_code' => '414001',
             'locality' => 'Ahmednagar',
             'name'     => 'Nitin Kaware',
             'address'  => 'At Dahigaon, Post. Shiradhon',
             'mobile'   => '9988778877',
-        ])->assertStatus(201);
+        ];
+
+        $this->postJson(route('api.my.address.store'), $data)->assertStatus(201);
 
         $this->assertCount(1, auth()->user()->addresses()->get());
+
+        $savedAddress = auth()->user()->addresses()->first();
+
+        collect(['pin_code', 'name', 'address', 'mobile'])->each(function ($key) use ($data, $savedAddress) {
+            $this->assertEquals($data[$key], $savedAddress->{$key});
+        });
     }
 
     /** @test */

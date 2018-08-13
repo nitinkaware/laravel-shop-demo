@@ -13,7 +13,7 @@ export default class {
         this.errors = new Errors();
 
         // Create shorcut methods
-        ['post', 'patch', 'put', 'delete'].forEach(method => {
+        ['get', 'post', 'patch', 'put', 'delete'].forEach(method => {
             this[method] = (url, data) => {
                 return this.submit(method, url, data);
             };

@@ -6,7 +6,8 @@
                :width="450"
                height="auto"
                :pivotX="0.5"
-               :pivotY="0.3">
+               :pivotY="0.3"
+               @before-open="beforeOpen">
             <div class="cart">
                 <div class="card-header">
                     <h3 class="card-title">Add new address</h3>
@@ -24,7 +25,7 @@
                                            @blur="fetchAddressDetails"
                                            tabindex="1">
                                     <div class="invalid-feedback">{{ form.errors.get('pin_code') }}</div>
-                                    <span class="input-icon-addon" v-if="fetching">
+                                    <span class="input-icon-addon" v-if="this.fetching.isPending">
                                         <i class="fa fa-spinner fa-spin"></i>
                                     </span>
                                 </div>
@@ -53,7 +54,8 @@
                                 <div class="input-icon mb-3">
                                     <input type="text"
                                            class="form-control"
-                                           disabled
+                                           readonly
+                                           v-model="city"
                                            tabindex="3">
                                 </div>
                             </div>
@@ -64,7 +66,8 @@
                                 <div class="input-icon mb-3">
                                     <input type="text"
                                            class="form-control"
-                                           disabled
+                                           readonly
+                                           v-model="state"
                                            tabindex="4">
                                 </div>
                             </div>
@@ -161,26 +164,53 @@
     export default {
         data: function () {
             return {
-                fetching: false,
                 isSaving: false,
                 pin_code: null,
                 locality: null,
+                city: null,
+                state: null,
                 name: null,
                 address: null,
                 mobile: null,
                 is_default: false,
-                form: new Form
+                fetching: new Form,
+                form: new Form,
+                cachedPins: collect()
             }
         },
         computed: {},
         methods: {
+            beforeOpen(event) {
+                if (event.params) {
+                    this.pin_code = event.params.pin_code;
+                    this.locality = event.params.locality;
+                    this.city = event.params.city;
+                    this.state = event.params.state;
+                    this.name = event.params.name;
+                    this.address = event.params.address;
+                    this.mobile = event.params.mobile;
+                    this.is_default = event.params.is_default;
+                }
+            },
             fetchAddressDetails() {
-                console.log("oops: ");
+                if (this.cachedPins.contains(this.pin_code)) {
+                    return;
+                }
+
+                this.fetching.get(route('api.pincode.index', this.pin_code)).then(response => {
+                    if (response.state !== '') {
+                        this.cachedPins.push(this.pin_code);
+                        this.city = response.city;
+                        this.state = response.stateName;
+                    }
+                });
             },
             reset() {
                 this.form.errors.clear();
                 this.$modal.hide('address');
 
+                this.city = null;
+                this.state = null;
                 this.pin_code = null;
                 this.locality = null;
                 this.name = null;

@@ -21,6 +21,7 @@ Route::namespace('Api')->prefix('api/v1')->name('api.')->group(function () {
     Route::delete('/checkout/cart/{cart}', 'CartCheckoutController@destroy')->name('checkout.cart.destroy');
     Route::put('/checkout/quantity/{cart}', 'CheckoutCartQuantityController@update')->name('checkout.quantity.update');
     Route::put('/checkout/size/{cart}', 'CheckoutCartSizeController@update')->name('checkout.size.update');
+    Route::get('/pincode/{pin_code}', 'PinCodesController@index')->name('pincode.index');
 
     Route::prefix('my')->group(function () {
         Route::get('/wishlist/', 'WishListController@index')->name('wishlist.index');

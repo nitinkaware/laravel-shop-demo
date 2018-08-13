@@ -79,7 +79,7 @@ final class CreateAddress {
             'state_code' => $responseJson['state'] ?? '',
             'name'       => $this->name,
             'address'    => $this->address,
-            'mobile'     => $this->address,
+            'mobile'     => $this->mobile,
             'is_default' => $this->isDefault,
         ]);
     }

@@ -4,7 +4,6 @@
                name="selected_address"
                class="address-input"
                :checked="address.is_default"
-               @click="emitAddressSelected"
         >
         <div class="card rounded-full badge-pill address-selected address-row">
             <div class="card-body d-flex flex-column">
@@ -12,8 +11,11 @@
                 <div class="text-muted">
                     {{ address.address }}.
                 </div>
-                <div class="text-muted mb-3">
+                <div class="text-muted">
                     {{ cityName }}
+                </div>
+                <div class="text-muted mb-3">
+                    {{ address.state }}
                 </div>
                 <p>
                     <span class="text-muted">Mobile:</span> <strong> {{ address.mobile }}</strong>
@@ -26,7 +28,7 @@
                            data-original-title="Remove"></i>
                         Remove
                     </button>
-                    <button type="button" class="btn btn-pill btn-secondary">
+                    <button type="button" class="btn btn-pill btn-secondary" @click="showModal">
                         <i class="fa fa-edit" data-toggle="tooltip"
                            data-original-title="fa fa-edit"></i>
                         Edit
@@ -55,8 +57,17 @@
             }
         },
         methods: {
-            emitAddressSelected: function () {
-                console.log("clickedAddressId: " + this.address.id);
+            showModal: function () {
+                this.$modal.show('address', {
+                    pin_code: this.address.pin_code,
+                    locality: this.address.town,
+                    city: this.address.distinct,
+                    state: this.address.state,
+                    name: this.address.name,
+                    address: this.address.address,
+                    mobile: this.address.mobile,
+                    is_default: this.address.is_default,
+                });
             }
         }
     }

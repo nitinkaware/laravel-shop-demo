@@ -45889,6 +45889,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['propAddress'],
@@ -45902,12 +45904,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: {
         cityName: function cityName() {
-            return this.address.pin_code + " - " + this.address.distinct;
+            return this.address.pin_code + ' - ' + this.address.distinct;
         }
     },
     methods: {
-        emitAddressSelected: function emitAddressSelected() {
-            console.log("clickedAddressId: " + this.address.id);
+        showModal: function showModal() {
+            this.$modal.show('address', {
+                pin_code: this.address.pin_code,
+                locality: this.address.town,
+                city: this.address.distinct,
+                state: this.address.state,
+                name: this.address.name,
+                address: this.address.address,
+                mobile: this.address.mobile,
+                is_default: this.address.is_default
+            });
         }
     }
 });
@@ -45924,8 +45935,7 @@ var render = function() {
     _c("input", {
       staticClass: "address-input",
       attrs: { type: "radio", name: "selected_address" },
-      domProps: { checked: _vm.address.is_default },
-      on: { click: _vm.emitAddressSelected }
+      domProps: { checked: _vm.address.is_default }
     }),
     _vm._v(" "),
     _c(
@@ -45952,9 +45962,17 @@ var render = function() {
             )
           ]),
           _vm._v(" "),
-          _c("div", { staticClass: "text-muted mb-3" }, [
+          _c("div", { staticClass: "text-muted" }, [
             _vm._v(
               "\n                " + _vm._s(_vm.cityName) + "\n            "
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "text-muted mb-3" }, [
+            _vm._v(
+              "\n                " +
+                _vm._s(_vm.address.state) +
+                "\n            "
             )
           ]),
           _vm._v(" "),
@@ -45965,7 +45983,30 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _vm._m(0)
+        _c("div", { staticClass: "card-footer" }, [
+          _c("div", { staticClass: "d-flex" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-pill btn-secondary",
+                attrs: { type: "button" },
+                on: { click: _vm.showModal }
+              },
+              [
+                _c("i", {
+                  staticClass: "fa fa-edit",
+                  attrs: {
+                    "data-toggle": "tooltip",
+                    "data-original-title": "fa fa-edit"
+                  }
+                }),
+                _vm._v("\n                    Edit\n                ")
+              ]
+            )
+          ])
+        ])
       ]
     )
   ])
@@ -45975,45 +46016,20 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-footer" }, [
-      _c("div", { staticClass: "d-flex" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-pill btn-secondary mr-5",
-            attrs: { type: "button" }
-          },
-          [
-            _c("i", {
-              staticClass: "fa fa-remove",
-              attrs: {
-                "data-toggle": "tooltip",
-                "data-original-title": "Remove"
-              }
-            }),
-            _vm._v("\n                    Remove\n                ")
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-pill btn-secondary",
-            attrs: { type: "button" }
-          },
-          [
-            _c("i", {
-              staticClass: "fa fa-edit",
-              attrs: {
-                "data-toggle": "tooltip",
-                "data-original-title": "fa fa-edit"
-              }
-            }),
-            _vm._v("\n                    Edit\n                ")
-          ]
-        )
-      ])
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-pill btn-secondary mr-5",
+        attrs: { type: "button" }
+      },
+      [
+        _c("i", {
+          staticClass: "fa fa-remove",
+          attrs: { "data-toggle": "tooltip", "data-original-title": "Remove" }
+        }),
+        _vm._v("\n                    Remove\n                ")
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -46235,6 +46251,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -46242,26 +46261,55 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            fetching: false,
             isSaving: false,
             pin_code: null,
             locality: null,
+            city: null,
+            state: null,
             name: null,
             address: null,
             mobile: null,
             is_default: false,
-            form: new __WEBPACK_IMPORTED_MODULE_0__app_FormObject_Form__["a" /* default */]()
+            fetching: new __WEBPACK_IMPORTED_MODULE_0__app_FormObject_Form__["a" /* default */](),
+            form: new __WEBPACK_IMPORTED_MODULE_0__app_FormObject_Form__["a" /* default */](),
+            cachedPins: collect()
         };
     },
     computed: {},
     methods: {
+        beforeOpen: function beforeOpen(event) {
+            if (event.params) {
+                this.pin_code = event.params.pin_code;
+                this.locality = event.params.locality;
+                this.city = event.params.city;
+                this.state = event.params.state;
+                this.name = event.params.name;
+                this.address = event.params.address;
+                this.mobile = event.params.mobile;
+                this.is_default = event.params.is_default;
+            }
+        },
         fetchAddressDetails: function fetchAddressDetails() {
-            console.log("oops: ");
+            var _this = this;
+
+            if (this.cachedPins.contains(this.pin_code)) {
+                return;
+            }
+
+            this.fetching.get(route('api.pincode.index', this.pin_code)).then(function (response) {
+                if (response.state !== '') {
+                    _this.cachedPins.push(_this.pin_code);
+                    _this.city = response.city;
+                    _this.state = response.stateName;
+                }
+            });
         },
         reset: function reset() {
             this.form.errors.clear();
             this.$modal.hide('address');
 
+            this.city = null;
+            this.state = null;
             this.pin_code = null;
             this.locality = null;
             this.name = null;
@@ -46270,7 +46318,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.is_default = false;
         },
         handleSubmit: function handleSubmit() {
-            var _this = this;
+            var _this2 = this;
 
             this.form.post(route('api.my.address.store'), {
                 pin_code: this.pin_code,
@@ -46280,8 +46328,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 mobile: this.mobile,
                 is_default: this.is_default
             }).then(function (response) {
-                _this.$root.$emit('newAddressAdded', response.data);
-                _this.reset();
+                _this2.$root.$emit('newAddressAdded', response.data);
+                _this2.reset();
             }).catch(function (error) {
                 console.log(error);
             });
@@ -46311,7 +46359,8 @@ var render = function() {
             height: "auto",
             pivotX: 0.5,
             pivotY: 0.3
-          }
+          },
+          on: { "before-open": _vm.beforeOpen }
         },
         [
           _c("div", { staticClass: "cart" }, [
@@ -46360,7 +46409,7 @@ var render = function() {
                         _vm._v(_vm._s(_vm.form.errors.get("pin_code")))
                       ]),
                       _vm._v(" "),
-                      _vm.fetching
+                      this.fetching.isPending
                         ? _c("span", { staticClass: "input-icon-addon" }, [
                             _c("i", { staticClass: "fa fa-spinner fa-spin" })
                           ])
@@ -46420,8 +46469,25 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "input-icon mb-3" }, [
                       _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.city,
+                            expression: "city"
+                          }
+                        ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: "", tabindex: "3" }
+                        attrs: { type: "text", readonly: "", tabindex: "3" },
+                        domProps: { value: _vm.city },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.city = $event.target.value
+                          }
+                        }
                       })
                     ])
                   ])
@@ -46435,8 +46501,25 @@ var render = function() {
                     _vm._v(" "),
                     _c("div", { staticClass: "input-icon mb-3" }, [
                       _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.state,
+                            expression: "state"
+                          }
+                        ],
                         staticClass: "form-control",
-                        attrs: { type: "text", disabled: "", tabindex: "4" }
+                        attrs: { type: "text", readonly: "", tabindex: "4" },
+                        domProps: { value: _vm.state },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.state = $event.target.value
+                          }
+                        }
                       })
                     ])
                   ])
@@ -46709,7 +46792,7 @@ var _class = function () {
         this.errors = new __WEBPACK_IMPORTED_MODULE_0__Errors__["a" /* default */]();
 
         // Create shorcut methods
-        ['post', 'patch', 'put', 'delete'].forEach(function (method) {
+        ['get', 'post', 'patch', 'put', 'delete'].forEach(function (method) {
             _this[method] = function (url, data) {
                 return _this.submit(method, url, data);
             };
