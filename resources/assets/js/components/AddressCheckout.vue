@@ -36,7 +36,7 @@
                             <span class="pull-right text-dark">Rs. {{ order.sum }}</span>
                         </div>
                         <div class="mt-2 border-bottom">
-                            <span class="pull-left text-dark">Estimated Tex:</span>
+                            <span class="pull-left text-dark">Estimated Tax:</span>
                             <span class="pull-right text-dark mb-2">Rs. {{ order.tax }}</span>
                         </div>
                         <div class="mt-2 font-weight-bold">
@@ -75,7 +75,7 @@
         },
         created(){
             this.$root.$on('newAddressAdded', addresses => {
-                this.addresses = addresses;
+                this.addresses.push(addresses);
             });
         },
         computed: {},

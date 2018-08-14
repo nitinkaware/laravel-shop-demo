@@ -10,7 +10,7 @@
                @before-open="beforeOpen">
             <div class="cart">
                 <div class="card-header">
-                    <h3 class="card-title">Add new address</h3>
+                    <h3 class="card-title">{{ modalHeader }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -109,7 +109,7 @@
                             <div class="form-group">
                                 <label class="form-label">Mobile No.</label>
                                 <div class="input-icon mb-3">
-                                    <input type="text"
+                                    <input type="tel"
                                            class="form-control"
                                            :class="form.errors.has('mobile') ? 'is-invalid' : ''"
                                            tabindex="7"
@@ -164,24 +164,32 @@
     export default {
         data: function () {
             return {
+                route: null,
+                method: null,
                 isSaving: false,
+                id: null,
                 pin_code: null,
+                fetching: new Form,
+                form: new Form,
+                cachedPins: collect(),
                 locality: null,
                 city: null,
                 state: null,
                 name: null,
                 address: null,
                 mobile: null,
-                is_default: false,
-                fetching: new Form,
-                form: new Form,
-                cachedPins: collect()
+                is_default: false
             }
         },
-        computed: {},
+        computed: {
+            modalHeader() {
+                return this.method === 'post' ? 'Add new address' : 'Edit address';
+            }
+        },
         methods: {
             beforeOpen(event) {
                 if (event.params) {
+                    this.id = event.params.id;
                     this.pin_code = event.params.pin_code;
                     this.locality = event.params.locality;
                     this.city = event.params.city;
@@ -190,6 +198,11 @@
                     this.address = event.params.address;
                     this.mobile = event.params.mobile;
                     this.is_default = event.params.is_default;
+                    this.route = route('api.my.address.update', event.params.id)
+                    this.method = 'put';
+                } else {
+                    this.method = 'post';
+                    this.route = route('api.my.address.store')
                 }
             },
             fetchAddressDetails() {
@@ -205,21 +218,8 @@
                     }
                 });
             },
-            reset() {
-                this.form.errors.clear();
-                this.$modal.hide('address');
-
-                this.city = null;
-                this.state = null;
-                this.pin_code = null;
-                this.locality = null;
-                this.name = null;
-                this.address = null;
-                this.mobile = null;
-                this.is_default = false;
-            },
             handleSubmit() {
-                this.form.post(route('api.my.address.store'), {
+                this.form[this.method](this.route, {
                     pin_code: this.pin_code,
                     locality: this.locality,
                     name: this.name,
@@ -227,11 +227,39 @@
                     mobile: this.mobile,
                     is_default: this.is_default,
                 }).then(response => {
-                    this.$root.$emit('newAddressAdded', response.data);
+                    this.fireAfterFetchEvents(response);
                     this.reset();
                 }).catch(error => {
                     console.log(error);
                 });
+            },
+            reset() {
+                this.form.errors.clear();
+                this.$modal.hide('address');
+
+                collect([
+                    'city',
+                    'state',
+                    'pin_code',
+                    'locality',
+                    'name',
+                    'address',
+                    'mobile',
+                    'is_default',
+                    'method',
+                    'route',
+                ]).each(name => {
+                    this[name] = null;
+                });
+            },
+            fireAfterFetchEvents: function (response) {
+                if (this.is_default) {
+                    this.$root.$emit('markedAsDefaultAddress', response.id);
+                }
+
+                this.method === 'post'
+                    ? this.$root.$emit('newAddressAdded', response)
+                    : this.$root.$emit('addressUpdated', response);
             }
         }
     }

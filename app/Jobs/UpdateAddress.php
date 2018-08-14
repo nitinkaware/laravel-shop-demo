@@ -2,28 +2,17 @@
 
 namespace App\Jobs;
 
+use App\Address;
 use App\Http\Requests\AddressRequest;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
-class CreateAddress {
+class UpdateAddress extends CreateAddress {
 
-    use DispatchesJobs;
-
-    protected $pinCode;
-
-    protected $locality;
-
-    protected $name;
-
-    protected $textAddress;
-
-    protected $mobile;
-
-    protected $isDefault;
+    private $address;
 
     /**
      * Create a new job instance.
      *
+     * @param Address $address
      * @param $pinCode
      * @param $locality
      * @param $name
@@ -31,19 +20,17 @@ class CreateAddress {
      * @param $mobile
      * @param $isDefault
      */
-    public function __construct($pinCode, $locality, $name, $textAddress, $mobile, $isDefault)
+    public function __construct(Address $address, $pinCode, $locality, $name, $textAddress, $mobile, $isDefault)
     {
-        $this->pinCode = $pinCode;
-        $this->locality = $locality;
-        $this->name = $name;
-        $this->textAddress = $textAddress;
-        $this->mobile = $mobile;
-        $this->isDefault = $isDefault;
+        $this->address = $address;
+
+        parent::__construct($pinCode, $locality, $name, $textAddress, $mobile, $isDefault);
     }
 
     public static function fromRequest(AddressRequest $request)
     {
         return new static(
+            $request->address(),
             $request->pinCode(),
             $request->locality(),
             $request->name(),
@@ -64,7 +51,7 @@ class CreateAddress {
 
         $this->markAsDefaultIfNeeded();
 
-        return auth()->user()->addresses()->create([
+        return tap($this->address)->update([
             'pin_code'   => $this->pinCode,
             'town'       => $this->locality,
             'distinct'   => $responseJson['city'] ?? '',
@@ -75,23 +62,5 @@ class CreateAddress {
             'mobile'     => $this->mobile,
             'is_default' => $this->isDefault,
         ]);
-    }
-
-    protected function getStateCity()
-    {
-        $responseJson = $this->dispatchNow(
-            new FetchStateCityByPin($this->pinCode)
-        );
-
-        return $responseJson;
-    }
-
-    protected function markAsDefaultIfNeeded(): void
-    {
-        if ($this->isDefault) {
-            auth()->user()->addresses()->update([
-                'is_default' => false,
-            ]);
-        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Address;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddressRequest extends FormRequest {
@@ -24,7 +25,7 @@ class AddressRequest extends FormRequest {
     public function rules()
     {
         return [
-            'pin_code' => ['required', 'min:6', 'max:6'],
+            'pin_code' => ['required', 'digits_between:6,6'],
             'locality' => ['required', 'regex:/^[\pL\s\-]+$/u', 'max:100'],
             'name'     => ['required', 'regex:/^[\pL\s\-]+$/u', 'max:100'],
             'address'  => ['required', 'max:150'],
@@ -47,7 +48,7 @@ class AddressRequest extends FormRequest {
         return $this->name;
     }
 
-    public function address()
+    public function textAddress()
     {
         return $this->address;
     }
@@ -60,5 +61,14 @@ class AddressRequest extends FormRequest {
     public function isDefault()
     {
         return (bool) $this->is_default;
+    }
+
+    public function address()
+    {
+        $address = $this->user()->addresses()->find($this->route('address'));
+
+        abort_if($address === null, response()->json([], 404));
+
+        return $address;
     }
 }

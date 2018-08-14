@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Address;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -30,7 +31,7 @@ class AddressTest extends TestCase {
     {
         $this->signIn();
 
-        foreach (['12345', '1234567'] as $pinCode) {
+        foreach (['0', '12345', '1234567', '-', '1111--', '9', 4] as $pinCode) {
             $this->postJson(route('api.my.address.store'), [
                 'pin_code' => $pinCode,
             ])->assertValidationFails('pin_code');
@@ -219,8 +220,36 @@ class AddressTest extends TestCase {
     }
 
     /** @test */
-    function it_should_find_state_and_city_by_pin_code()
+    function user_can_update_his_address()
     {
+        $this->signIn();
 
+        $data = [
+            'pin_code' => '414001',
+            'locality' => 'Ahmednagar',
+            'name'     => 'Nitin Kaware',
+            'address'  => 'At Dahigaon, Post. Shiradhon',
+            'mobile'   => '9988778877',
+        ];
+
+        $this->postJson(route('api.my.address.store'), $data)->assertStatus(201);
+
+        $this->withoutExceptionHandling();
+
+        $data = [
+            'pin_code' => '411038',
+            'locality' => 'Kothrud',
+            'name'     => 'Amol Wagh',
+            'address'  => 'Flat No. 6',
+            'mobile'   => '9988776655',
+        ];
+
+        $this->putJson(route('api.my.address.update', Address::first()), $data)->assertStatus(202);
+
+        $savedAddress = auth()->user()->addresses()->first();
+
+        collect(['pin_code', 'name', 'address', 'mobile'])->each(function ($key) use ($data, $savedAddress) {
+            $this->assertEquals($data[$key], $savedAddress->{$key});
+        });
     }
 }

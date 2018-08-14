@@ -48,8 +48,16 @@
                 checkedId: null,
             }
         },
-        created(){
+        created() {
+            this.$root.$on('markedAsDefaultAddress', id => {
+                this.address.is_default = this.address.id === id;
+            });
 
+            this.$root.$on('addressUpdated', address => {
+                if (this.address.id === address.id) {
+                    this.address = address;
+                }
+            });
         },
         computed: {
             cityName: function () {
@@ -59,6 +67,7 @@
         methods: {
             showModal: function () {
                 this.$modal.show('address', {
+                    id: this.address.id,
                     pin_code: this.address.pin_code,
                     locality: this.address.town,
                     city: this.address.distinct,
