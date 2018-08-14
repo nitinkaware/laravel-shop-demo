@@ -168,10 +168,10 @@
                 method: null,
                 isSaving: false,
                 id: null,
-                pin_code: null,
                 fetching: new Form,
+                cachedPins: {},
                 form: new Form,
-                cachedPins: collect(),
+                pin_code: null,
                 locality: null,
                 city: null,
                 state: null,
@@ -206,13 +206,12 @@
                 }
             },
             fetchAddressDetails() {
-                if (this.cachedPins.contains(this.pin_code)) {
-                    return;
+                if (!this.cachedPins[this.pin_code]) {
+                    this.cachedPins[this.pin_code] = this.fetching.get(route('api.pincode.index', this.pin_code));
                 }
 
-                this.fetching.get(route('api.pincode.index', this.pin_code)).then(response => {
+                this.cachedPins[this.pin_code].then(response => {
                     if (response.state !== '') {
-                        this.cachedPins.push(this.pin_code);
                         this.city = response.city;
                         this.state = response.stateName;
                     }
