@@ -278,10 +278,4 @@ class AddressTest extends TestCase {
             $this->assertEquals($data[$key], $savedAddress->{$key});
         });
     }
-
-    /** @test */
-    function it_should_update_the_selected_address()
-    {
-
-    }
 }

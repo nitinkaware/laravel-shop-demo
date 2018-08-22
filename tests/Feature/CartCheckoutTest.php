@@ -21,23 +21,7 @@ class CartCheckoutTest extends TestCase {
     }
 
     /** @test */
-    function it_should_return_all_the_items_in_the_cart()
-    {
-        $this->signIn();
-
-        $this->addProductToCart();
-
-        $response = $this->getJson(route('api.checkout.cart.index'));
-
-        $response->assertStatus(200);
-
-        $resource = (new CartCheckoutCollection(auth()->user()->carts()->with('product', 'color', 'size')->get()));
-
-        $this->assertSame(json_decode($resource->response()->getContent(), true), $response->json());
-    }
-
-    /** @test */
-    function quantity_is_required()
+    function a_quantity_is_required()
     {
         $this->signIn();
 
@@ -49,30 +33,57 @@ class CartCheckoutTest extends TestCase {
     }
 
     /** @test */
-    function quantity_should_be_between_1_to_5_and_number()
+    function a_quantity_should_be_between_1_to_5()
     {
         $this->signIn();
 
         $this->addProductToCart();
 
-        $this->putJson(route('api.checkout.quantity.update', Cart::first()), [
-            'quantity' => 6,
-        ])->assertStatus(422)->assertJsonValidationErrors('quantity');
-
-        //It should be integer.
-        $this->putJson(route('api.checkout.quantity.update', Cart::first()), [
-            'quantity' => 'sd',
-        ])->assertStatus(422)->assertJsonValidationErrors('quantity');
+        $this
+            ->putJson(route('api.checkout.quantity.update', Cart::first()), [
+                'quantity' => 6,
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('quantity');
     }
 
     /** @test */
-    function it_should_return_404_if_the_cart_id_is_invalid()
+    function a_quantity_should_be_integer()
     {
         $this->signIn();
 
         $this->addProductToCart();
 
-        $this->putJson(route('api.checkout.quantity.update', 10), [
+        $this
+            ->putJson(route('api.checkout.quantity.update', Cart::first()), [
+                'quantity' => 'sd',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('quantity');
+    }
+
+    /** @test */
+    function it_should_return_all_the_items_in_the_cart()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $response = tap($this->getJson(route('api.checkout.cart.index')))->assertStatus(200);
+
+        $resource = (new CartCheckoutCollection(auth()->user()->carts()->with('product', 'color', 'size')->get()));
+
+        $this->assertSame(json_decode($resource->response()->getContent(), true), $response->json());
+    }
+
+    /** @test */
+    function it_should_return_404_if_the_cartId_is_invalid()
+    {
+        $this->signIn();
+
+        $this->addProductToCart();
+
+        $this->putJson(route('api.checkout.quantity.update', $invalidCartId = 10), [
             'quantity' => 4,
         ])->assertStatus(404);
     }
@@ -92,7 +103,7 @@ class CartCheckoutTest extends TestCase {
     }
 
     /** @test */
-    function product_size_is_required()
+    function a_sizeId_is_required()
     {
         $this->signIn();
 
@@ -104,7 +115,7 @@ class CartCheckoutTest extends TestCase {
     }
 
     /** @test */
-    function product_size_should_be_valid_for_cart_product_is_required()
+    function sizeId_should_belongs_to_associated_product_in_the_cart()
     {
         $this->signIn();
 
@@ -112,18 +123,18 @@ class CartCheckoutTest extends TestCase {
 
         // Size should be exits in database and it should be associated with that product.
         $this->putJson(route('api.checkout.size.update', Cart::first()), [
-            'size_id' => 121,
+            'size_id' => $sizeIdNotAssociatedWithCart = 121,
         ])->assertStatus(422)
             ->assertJsonValidationErrors('size_id');
 
-        $this->putJson(route('api.checkout.size.update', 121), [
+        $this->putJson(route('api.checkout.size.update', $cartNotAssociatedWithSize  = 121), [
             'size_id' => 1,
         ])->assertStatus(422)
             ->assertJsonValidationErrors('size_id');
     }
 
     /** @test */
-    function user_can_update_the_product_size()
+    function a_user_can_update_the_product_size()
     {
         $this->signIn();
 

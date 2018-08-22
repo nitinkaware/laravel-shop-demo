@@ -6,12 +6,13 @@ use App\Cart;
 use App\Jobs\AddToCart;
 use App\Product;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Tests\Factories\ProductFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CartTest extends TestCase {
 
-    use RefreshDatabase, DispatchesJobs;
+    use RefreshDatabase, DispatchesJobs, ProductFactory;
 
     /** @test */
     function product_id_is_required()
@@ -38,21 +39,7 @@ class CartTest extends TestCase {
     {
         $this->signIn();
 
-        /** @var Product $product */
-        $product = factory(Product::class)->create();
-
-        $product->variants()->createMany([
-            [
-                'color' => 'Red',
-                'size'  => 42,
-                'price' => 1999,
-            ],
-            [
-                'color' => 'Black',
-                'size'  => 40,
-                'price' => 1999,
-            ],
-        ]);
+        $product = $this->productWithVariants(['variants_count' => 2]);
 
         // Add a size to product. If product has size then the size is required.
         $this->postJson(route('api.checkout.cart.store'), ['product_id' => $product->getKey()])
