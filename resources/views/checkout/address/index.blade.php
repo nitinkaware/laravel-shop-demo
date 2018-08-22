@@ -1,4 +1,4 @@
-@extends('vendor.tabler.layouts.main')
+@extends('vendor.tabler.layouts.main', ['title' => 'Select your address'])
 
 @section('content')
     <div class="my-3 my-md-5">

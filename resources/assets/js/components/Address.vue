@@ -23,7 +23,7 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex">
-                    <button type="button" class="btn btn-pill btn-secondary mr-5">
+                    <button type="button" class="btn btn-pill btn-secondary mr-5" @click="deleteAddress">
                         <i class="fa fa-remove" data-toggle="tooltip"
                            data-original-title="Remove"></i>
                         Remove
@@ -40,12 +40,14 @@
 </template>
 
 <script>
+    import Form from '../app/FormObject/Form';
     export default {
         props: ['propAddress'],
         data: function () {
             return {
                 address: this.propAddress,
                 checkedId: null,
+                form: new Form
             }
         },
         created() {
@@ -76,6 +78,25 @@
                     address: this.address.address,
                     mobile: this.address.mobile,
                     is_default: this.address.is_default,
+                });
+            },
+            deleteAddress: function () {
+                let shouldDelete = swal({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, remove this address!'
+                });
+
+                shouldDelete.then((result) => {
+                    if (result.value) {
+                        this.form.delete(route('api.my.address.destroy', this.address.id)).then(response => {
+                            this.$root.$emit('addressDeleted', response.data);
+                        });
+                    }
                 });
             }
         }

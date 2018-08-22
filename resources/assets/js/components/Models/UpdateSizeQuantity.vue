@@ -53,6 +53,7 @@
         computed: {},
         methods: {
             beforeOpen: function (event) {
+                console.log(this);
                 collect(['label', 'collection', 'cart', 'selected', 'requestParam', 'route', 'type'])
                     .each((item) => {
                         this[item] = event.params[item];

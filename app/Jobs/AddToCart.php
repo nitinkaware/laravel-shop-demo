@@ -22,7 +22,11 @@ final class AddToCart {
 
     public static function fromRequest(CartRequest $request)
     {
-        return new static($request->product(), $request->sizeId(), $request->colorId());
+        return new static(
+            $request->product(),
+            $request->sizeId(),
+            $request->colorId()
+        );
     }
 
     public function handle()

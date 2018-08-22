@@ -215,6 +215,10 @@
                         this.city = response.city;
                         this.state = response.stateName;
                     }
+
+                    if (response.locality.length) {
+                        this.locality = response.locality[0];
+                    }
                 });
             },
             handleSubmit() {

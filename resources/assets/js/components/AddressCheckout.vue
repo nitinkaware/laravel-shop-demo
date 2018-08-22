@@ -45,7 +45,11 @@
                         </div>
                     </div>
                     <div class="card-footer border-top-0">
-                        <button class="btn btn-block btn-lg btn-pr btn-primary">CONTINUE</button>
+                        <button class="btn btn-block btn-lg btn-pr btn-primary"
+                                :disabled="!addresses.length"
+                                @click="goToPayment">
+                            CONTINUE
+                        </button>
                     </div>
                 </div>
             </div>
@@ -74,14 +78,26 @@
             }
         },
         created(){
-            this.$root.$on('newAddressAdded', addresses => {
-                this.addresses.push(addresses);
+            this.$root.$on('newAddressAdded', address => {
+                this.addresses.push(address);
+            });
+
+            this.$root.$on('addressDeleted', addresses => {
+                this.addresses = addresses;
+
+                this.$root.$emit('addressUpdated', function () {
+                    let address = collect(addresses).firstWhere('is_default', true);
+                    return address ? address : [];
+                }());
             });
         },
         computed: {},
         methods: {
             showAddressModal() {
                 this.$modal.show('address');
+            },
+            goToPayment() {
+
             }
         }
     }
@@ -91,5 +107,9 @@
     .address-row {
         height: 296px;
         width: 275px;
+    }
+
+    :disabled {
+        cursor: not-allowed;
     }
 </style>

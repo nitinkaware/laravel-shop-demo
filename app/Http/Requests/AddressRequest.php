@@ -71,4 +71,11 @@ class AddressRequest extends FormRequest {
 
         return $address;
     }
+
+    public function messages()
+    {
+        return [
+            'mobile.digits_between' => 'Mobile should be exactly 10 numbers.',
+        ];
+    }
 }

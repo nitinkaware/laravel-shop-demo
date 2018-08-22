@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Address;
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -11,7 +12,7 @@ class AddressTest extends TestCase {
     use RefreshDatabase;
 
     /** @test */
-    function user_should_be_signed_in_for_this_action()
+    function unauthenticated_users_can_not_access_address()
     {
         $this->postJson(route('api.my.address.store'))
             ->assertStatus(401);
@@ -220,6 +221,31 @@ class AddressTest extends TestCase {
     }
 
     /** @test */
+    function it_should_delete_address()
+    {
+        /** @var User $jeffery */
+        $jeffery = factory(User::class)->create();
+
+        /** @var User $john */
+        $john = factory(User::class)->create();
+
+        // Given We have two addresses.
+        // We sign in with jeffery and jef send request to delete the address.
+        $jefferyAddress = factory(Address::class)->create(['user_id' => $jeffery]);
+        $johnAddress = factory(Address::class)->create(['user_id' => $john]);
+
+        $this->signIn($jeffery);
+
+        $this->deleteJson(route('api.my.address.destroy', $jefferyAddress))
+            ->assertStatus(202);
+
+        $this->assertTrue($john->addresses()->first()->is($johnAddress));
+
+        // Jeff should have zero address.
+        $this->assertCount(0, $jeffery->addresses()->get());
+    }
+
+    /** @test */
     function user_can_update_his_address()
     {
         $this->signIn();
@@ -251,5 +277,11 @@ class AddressTest extends TestCase {
         collect(['pin_code', 'name', 'address', 'mobile'])->each(function ($key) use ($data, $savedAddress) {
             $this->assertEquals($data[$key], $savedAddress->{$key});
         });
+    }
+
+    /** @test */
+    function it_should_update_the_selected_address()
+    {
+
     }
 }

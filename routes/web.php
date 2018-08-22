@@ -28,5 +28,6 @@ Route::namespace('Api')->prefix('api/v1')->name('api.')->group(function () {
         Route::post('/wishlist/', 'WishListController@store')->name('wishlist.store');
         Route::post('/address/', 'AddressController@store')->name('my.address.store');
         Route::put('/address/{address}', 'AddressController@update')->name('my.address.update');
+        Route::delete('/address/{address}', 'AddressController@destroy')->name('my.address.destroy');
     });
 });

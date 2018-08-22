@@ -22,25 +22,6 @@ $factory->define(App\User::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(App\Product::class, function (Faker $faker) {
-    return [
-        'name'        => $faker->name,
-        'tax_id'      => function () {
-            return factory(\App\Tax::class)->create();
-        },
-        'category_id' => function () {
-            return factory(\App\Category::class)->create();
-        },
-    ];
-});
-
-$factory->define(App\Tax::class, function (Faker $faker) {
-    return [
-        'name'  => 'VAT',
-        'value' => array_random([12.50, 4]),
-    ];
-});
-
 $factory->define(App\ProductStatistic::class, function (Faker $faker) {
     return [
         'product_id'  => function () {
@@ -59,5 +40,22 @@ $factory->define(App\Category::class, function (Faker $faker) {
     return [
         'name' => $name,
         'slug' => str_slug($name),
+    ];
+});
+
+$factory->define(App\Address::class, function (Faker $faker) {
+
+    return [
+        'user_id'    => function () {
+            return factory(\App\User::class)->create();
+        },
+        'pin_code'   => array_random([123456, 757575, 787877, 89898]),
+        'town'       => $faker->city,
+        'distinct'   => $faker->city,
+        'state'      => $faker->word,
+        'state_code' => $faker->countryCode,
+        'name'       => $faker->name('m'),
+        'address'    => $faker->address,
+        'mobile'     => $faker->numberBetween(9222222222, 9999999999),
     ];
 });

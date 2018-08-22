@@ -182,7 +182,7 @@
                             );
                         });
                     }
-                })
+                });
             },
             goToAddress: function () {
                 this.isLoading = true;

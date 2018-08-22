@@ -185,7 +185,7 @@ class CartTest extends TestCase {
         $this->signIn();
 
         $this->deleteJson(route('api.checkout.cart.destroy', $this->addProductToCart()))
-            ->assertStatus(204);
+            ->assertStatus(202);
 
         $this->assertEquals(0, auth()->user()->carts()->count());
     }
