@@ -13,7 +13,6 @@
     "kitetail/zttp": "^0.3.0",
     "laravel/framework": "5.6.*",
     "laravel/tinker": "^1.0",
-    "orangehill/iseed": "^2.5",
     "pingecom/l5-tabler": "dev-master",
     "tightenco/ziggy": "^0.6.5"
   },
