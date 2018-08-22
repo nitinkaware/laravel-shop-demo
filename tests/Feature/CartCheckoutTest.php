@@ -5,31 +5,30 @@ namespace Tests\Feature;
 use App\Cart;
 use App\Http\Resources\CartCheckoutCollection;
 use App\Jobs\AddToCart;
-use App\Product;
-use App\Variant;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Tests\Factories\ProductFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CartCheckoutTest extends TestCase {
 
-    use RefreshDatabase, DispatchesJobs;
+    use RefreshDatabase, DispatchesJobs, ProductFactory;
 
     /** @test */
-    function it_should_be_for_logged_in_user()
+    function a_user_should_be_signed_in()
     {
         $this->get(route('checkout.cart.index'))->assertRedirect('/login');
     }
 
     /** @test */
-    function it_should_get_all_the_items_in_the_cart_for_checkout()
+    function it_should_return_all_the_items_in_the_cart()
     {
         $this->signIn();
 
         $this->addProductToCart();
 
-        // Assert that correct json response returns.
         $response = $this->getJson(route('api.checkout.cart.index'));
+
         $response->assertStatus(200);
 
         $resource = (new CartCheckoutCollection(auth()->user()->carts()->with('product', 'color', 'size')->get()));
@@ -142,32 +141,8 @@ class CartCheckoutTest extends TestCase {
 
     private function addProductToCart(): void
     {
-        /** @var Product $kurta */
-        $kurta = factory(Product::class)->create(['name' => 'Libas Women Navy']);
+        $product = $this->productWithVariants(['variants_count' => 2]);
 
-        $kurta->variants()->createMany([
-            [
-                'color' => 'Green Printed Layered',
-                'size'  => 30,
-                'price' => 764,
-            ],
-            [
-                'color' => 'Green Printed Layered',
-                'size'  => 32,
-                'price' => 764,
-            ],
-            [
-                'color' => 'Blue Printed Layered',
-                'size'  => 30,
-                'price' => 1000,
-            ],
-            [
-                'color' => 'Blue Printed Layered',
-                'size'  => 32,
-                'price' => 1000,
-            ],
-        ]);
-
-        $this->dispatchNow(new AddToCart($kurta, 2, 2));
+        $this->dispatchNow(new AddToCart($product, $sizeId = 2, $colorId = 2));
     }
 }
