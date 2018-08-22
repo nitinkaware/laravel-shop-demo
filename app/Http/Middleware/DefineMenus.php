@@ -42,10 +42,12 @@ class DefineMenus {
      */
     private function getTopLevelCategories()
     {
-        return Category::with('subCategories')->whereHas('subCategories', function ($query) {
-            $query->whereNotIn('category_id', function ($innerQuery) {
-                $innerQuery->select('sub_category_id')->from('sub_categories');
-            });
-        })->get();
+        return cache()->rememberForever('menus:topLevelCategories', function () {
+            return Category::with('subCategories')->whereHas('subCategories', function ($query) {
+                $query->whereNotIn('category_id', function ($innerQuery) {
+                    $innerQuery->select('sub_category_id')->from('sub_categories');
+                });
+            })->get();
+        });
     }
 }
