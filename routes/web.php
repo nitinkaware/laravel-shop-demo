@@ -12,7 +12,7 @@ Route::get('/checkout/cart/', 'CartCheckoutController@index')->name('checkout.ca
 Route::get('/checkout/address/', 'AddressCheckoutController@index')->name('checkout.address.index');
 
 // Api Routes.
-Route::namespace('Api')->prefix('api/v1')->name('api.')->group(function () {
+Route::namespace('API')->prefix('api/v1')->name('api.')->group(function () {
     Route::get('/products/all', 'AllProductsListingController@index')->name('products.all.index');
     Route::get('/products/{category}', 'CategoryProductsListingController@index')->name('category.products.index');
 
