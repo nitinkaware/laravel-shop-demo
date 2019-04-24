@@ -19,12 +19,12 @@ window.Vue = require('vue');
 import VModal from 'vue-js-modal';
 Vue.use(VModal);
 
-Vue.component('product-listing', require('./components/ProductListing.vue'));
-Vue.component('product-view', require('./components/ProductView.vue'));
-Vue.component('user-dropdown', require('./components/UserDropdown.vue'));
-Vue.component('cart-menu', require('./components/CartMenu.vue'));
-Vue.component('cart-checkout', require('./components/CartCheckout.vue'));
-Vue.component('address-checkout', require('./components/AddressCheckout.vue'));
+Vue.component('product-listing', () => import('./components/ProductListing.vue'));
+Vue.component('product-view', require('./components/ProductView.vue').default);
+Vue.component('user-dropdown', require('./components/UserDropdown.vue').default);
+Vue.component('cart-menu', require('./components/CartMenu.vue').default);
+Vue.component('cart-checkout', require('./components/CartCheckout.vue').default);
+Vue.component('address-checkout', require('./components/AddressCheckout.vue').default);
 
 const app = new Vue({
     el: '#app'

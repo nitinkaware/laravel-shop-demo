@@ -198,7 +198,7 @@
                     this.address = event.params.address;
                     this.mobile = event.params.mobile;
                     this.is_default = event.params.is_default;
-                    this.route = route('api.my.address.update', event.params.id)
+                    this.route = route('api.my.address.update', event.params.id);
                     this.method = 'put';
                 } else {
                     this.method = 'post';

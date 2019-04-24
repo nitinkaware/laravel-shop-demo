@@ -11,7 +11,16 @@ let mix = require('laravel-mix');
  |
  */
 
+mix.config
+
 mix.js('resources/assets/js/app.js', 'public/js')
     .sass('resources/assets/sass/app.scss', 'public/css');
+
+
+mix.webpackConfig({
+    output: {
+        chunkFilename: 'js/[name].[chunkhash].js',
+    },
+});
 
 mix.disableNotifications();

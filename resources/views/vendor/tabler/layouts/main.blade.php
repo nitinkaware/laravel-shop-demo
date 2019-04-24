@@ -14,15 +14,6 @@
     <link href="{{ asset('admin/assets/css/dashboard.css') }}" rel="stylesheet"/>
     <link href="{{ mix('css/app.css') }}" rel="stylesheet"/>
     @stack('styles')
-    @routes
-    <script src="{{ asset('admin/assets/js/require.min.js') }}"></script>
-    <script>
-        requirejs.config({
-            baseUrl: '/admin/'
-        });
-    </script>
-    <script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
-    @stack('scripts')
 </head>
 <body>
 <div class="page" id="app">
@@ -108,6 +99,16 @@
         </div>
     </footer>
 </div>
+
+@routes
 <script src="{{ mix('js/app.js') }}"></script>
+<script>
+    requirejs.config({
+        baseUrl: '/admin/'
+    });
+</script>
+<script src="{{ asset('admin/assets/js/dashboard.js') }}"></script>
+<script src="{{ asset('admin/assets/js/require.min.js') }}"></script>
+@stack('scripts')
 </body>
 </html>
